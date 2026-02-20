@@ -116,12 +116,31 @@ function lightUpList(list) {
 function displayTime(h, m) {
     clearBoard();
 
-    // Artık dakikalar 4 noktada gösterilecek
-    const exactExtraMin = m % 5;
-    const roundedMin = m - exactExtraMin; // 5'in katı olan ana blok
+    let baseMin;
+    let dotCount = 0;
+
+    if (m === 0) {
+        baseMin = 0;
+        dotCount = 0;
+    } else if (m <= 30) {
+        // Geçiyor dilimi: Noktalar geçen süreyi ifade eder (1, 2, 3, 4)
+        baseMin = m - (m % 5);
+        dotCount = m % 5;
+    } else {
+        // Var dilimi (31-59): Müşterinin "Toplama" mantığı yapabilmesi için,
+        // İçinde bulunulan değil, bir sonraki 5'li dilime zıplıyoruz (örn 36 -> 40).
+        // Böylece 20 VAR yazıyor, kullanıcı 4 nokta ekleyip "24 VAR" diyerek DOĞRU VAKTE zihinden topluyor!
+        if (m % 5 === 0) {
+            baseMin = m;
+            dotCount = 0;
+        } else {
+            baseMin = Math.ceil(m / 5) * 5;     // 36 -> 40
+            dotCount = baseMin - m;             // 40 - 36 = 4 nokta eklenecek
+        }
+    }
 
     // Noktaları yak
-    for (let i = 1; i <= exactExtraMin; i++) {
+    for (let i = 1; i <= dotCount; i++) {
         document.getElementById(`dot-${i}`).classList.add("active");
     }
 
@@ -129,80 +148,93 @@ function displayTime(h, m) {
     let currentHour = h % 12;
     if (currentHour === 0) currentHour = 12;
 
-    // Saat söylem mantığında; eğer dakika 30'u geçiyorsa hedef saat bir sonraki saattir. ("bire yirmi var")
-    let targetHour = (roundedMin > 30) ? (currentHour % 12) + 1 : currentHour;
+    // Saat söylem mantığında; eğer dakika 30'u geçiyorsa hedef saat bir sonraki saattir.
+    let targetHour = (m > 30) ? (currentHour % 12) + 1 : currentHour;
 
-    if (roundedMin === 0) {
-        // Tam saat -> SAAT [SAAT_NOM]
-        lightUp(WORDS.SAAT);
-        lightUpList(HOURS_NOMINATIVE[targetHour]);
+    if (baseMin === 0) {
+        if (dotCount > 0) {
+            // Dakika 01, 02, 03, 04
+            // Sayısal kelime yok, SAAT_ACC ve GEÇİYOR yanar, noktalar okunur. "Biri ... 3 geçiyor"
+            lightUpList(HOURS_ACCUSATIVE[targetHour]);
+            lightUp(WORDS.GECIYOR);
+        } else {
+            // Tam saat
+            lightUp(WORDS.SAAT);
+            lightUpList(HOURS_NOMINATIVE[targetHour]);
+        }
     }
-    else if (roundedMin === 5) {
-        // 5 geçiyor -> [SAAT_ACC] BEŞ GEÇİYOR
+    else if (baseMin === 5) {
+        // 5 geçiyor
         lightUpList(HOURS_ACCUSATIVE[targetHour]);
         lightUp(WORDS.BES_MIN);
         lightUp(WORDS.GECIYOR);
     }
-    else if (roundedMin === 10) {
-        // 10 geçiyor -> [SAAT_ACC] ON GEÇİYOR
+    else if (baseMin === 10) {
+        // 10 geçiyor
         lightUpList(HOURS_ACCUSATIVE[targetHour]);
         lightUp(WORDS.ON_MIN);
         lightUp(WORDS.GECIYOR);
     }
-    else if (roundedMin === 15) {
-        // Çeyrek geçiyor -> [SAAT_ACC] ÇEYREK GEÇİYOR
+    else if (baseMin === 15) {
+        // Çeyrek geçiyor
         lightUpList(HOURS_ACCUSATIVE[targetHour]);
         lightUp(WORDS.CEYREK);
         lightUp(WORDS.GECIYOR);
     }
-    else if (roundedMin === 20) {
-        // 20 geçiyor -> [SAAT_ACC] YİRMİ GEÇİYOR
+    else if (baseMin === 20) {
+        // 20 geçiyor
         lightUpList(HOURS_ACCUSATIVE[targetHour]);
         lightUp(WORDS.YIRMI);
         lightUp(WORDS.GECIYOR);
     }
-    else if (roundedMin === 25) {
-        // 25 geçiyor -> [SAAT_ACC] YİRMİ BEŞ GEÇİYOR
+    else if (baseMin === 25) {
+        // 25 geçiyor
         lightUpList(HOURS_ACCUSATIVE[targetHour]);
         lightUp(WORDS.YIRMI);
         lightUp(WORDS.BES_MIN);
         lightUp(WORDS.GECIYOR);
     }
-    else if (roundedMin === 30) {
-        // Buçuk -> SAAT [SAAT_NOM] BUÇUK
+    else if (baseMin === 30) {
+        // Buçuk
         lightUp(WORDS.SAAT);
         lightUpList(HOURS_NOMINATIVE[targetHour]);
         lightUp(WORDS.BUCUK);
     }
-    else if (roundedMin === 35) {
-        // 25 var -> [SAAT_DAT] YİRMİ BEŞ VAR
+    else if (baseMin === 35) {
+        // 25 var (Örn: Dakika 31 ise, burası yanar + 4 Nokta)
         lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.YIRMI);
         lightUp(WORDS.BES_MIN);
         lightUp(WORDS.VAR);
     }
-    else if (roundedMin === 40) {
-        // 20 var -> [SAAT_DAT] YİRMİ VAR
+    else if (baseMin === 40) {
+        // 20 var
         lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.YIRMI);
         lightUp(WORDS.VAR);
     }
-    else if (roundedMin === 45) {
-        // Çeyrek var -> [SAAT_DAT] ÇEYREK VAR
+    else if (baseMin === 45) {
+        // Çeyrek var
         lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.CEYREK);
         lightUp(WORDS.VAR);
     }
-    else if (roundedMin === 50) {
-        // 10 var -> [SAAT_DAT] ON VAR
+    else if (baseMin === 50) {
+        // 10 var
         lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.ON_MIN);
         lightUp(WORDS.VAR);
     }
-    else if (roundedMin === 55) {
-        // 5 var -> [SAAT_DAT] BEŞ VAR
+    else if (baseMin === 55) {
+        // 5 var
         lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.BES_MIN);
+        lightUp(WORDS.VAR);
+    }
+    else if (baseMin === 60) {
+        // Dakika 56, 57, 58, 59
+        // Sayı kelimesi yok, SAAT_DAT ve VAR yanar. Noktalar boşluğu doldurur. "Beşe ... 4 var"
+        lightUpList(HOURS_DATIVE[targetHour]);
         lightUp(WORDS.VAR);
     }
 }
