@@ -1,0 +1,163 @@
+:root {
+    --bg-body: #0d0d0d;
+    --clock-bg: #d4af37; /* Lüks Altın Rengi */
+    --clock-border: #8e731c;
+    --text-off: rgba(60, 48, 12, 0.4); /* Pasif harfler */
+    --text-on: #ffffff; /* Yanan harfler */
+    --glow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.5);
+    /* For dark clock aesthetics */
+    --dark-clock-bg: #1a1a1a;
+    --dark-clock-border: #000;
+    --dark-text-off: #333;
+    --dark-text-on: #fff;
+    --dark-glow: 0 0 10px #fff, 0 0 20px #fff;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 600px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    color: var(--clock-bg);
+}
+
+p {
+    color: #888;
+    margin-bottom: 40px;
+    font-size: 1rem;
+}
+
+.clock-wrapper {
+    /* Lüks bir saat görünümü için gradient ve gölge */
+    background: linear-gradient(135deg, #f3d46a 0%, #b58d22 100%);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 0 0 4px rgba(255,255,255,0.2), inset 0 0 0 8px var(--clock-border);
+    margin-bottom: 40px;
+    display: inline-block;
+    position: relative;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.letter {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-off);
+    transition: color 0.4s ease, text-shadow 0.4s ease, transform 0.4s ease;
+    text-transform: uppercase;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    letter-spacing: 2px; /* Harflerin arası biraz daha açılırsa güzel durur */
+}
+
+.letter.active {
+    color: var(--text-on);
+    text-shadow: var(--glow);
+    transform: scale(1.1);
+}
+
+.dots-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.dots {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-off);
+    transition: all 0.4s ease;
+}
+
+.dot.active {
+    background-color: var(--text-on);
+    box-shadow: var(--glow);
+    transform: scale(1.2);
+}
+
+.dot-info {
+    font-size: 0.75rem;
+    color: var(--text-off);
+    opacity: 0.7;
+}
+
+.controls {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls label {
+    font-size: 1.2rem;
+    color: #ccc;
+    font-weight: 600;
+}
+
+.controls input[type="time"] {
+    background: #000;
+    color: var(--clock-bg);
+    border: 1px solid var(--clock-bg);
+    padding: 12px 20px;
+    font-size: 1.5rem;
+    border-radius: 8px;
+    font-family: inherit;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.controls input[type="time"]:focus {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkçe Kelime Saat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TÜRKÇE SAAT</h1>
+        <p>Tamamen Türkçeye uygun kelime bazlı lüks saat gösterimi.</p>
+        
+        <div class="clock-wrapper">
+            <div id="grid" class="grid">
+                <!-- Harfler JS tarafından oluşturulacaktır. -->
+            </div>
+            <div class="dots-wrapper">
+                <div class="dots" id="dots">
+                    <span class="dot" id="dot-1"></span>
+                    <span class="dot" id="dot-2"></span>
+                    <span class="dot" id="dot-3"></span>
+                    <span class="dot" id="dot-4"></span>
+                </div>
+                <div class="dot-info">
+                    (Ara dakikalar noktalarla gösterilir)
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <label for="timeInput">Zamanı Değiştirin</label>
+            <input type="time" id="timeInput" step="60">
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
