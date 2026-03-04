@@ -7,12 +7,7 @@
 const THEMES = [
     { id: 'stone-bg',       src: 'images/stone-bg.png',       name: 'Yeşil Mermer' },
     { id: 'siyah-mermer',   src: 'images/siyah-mermer.png',   name: 'Siyah Mermer' },
-    { id: 'lapis-lazuli',   src: 'images/lapis-lazuli.png',   name: 'Lapis Lazuli' },
-    { id: 'ametist',        src: 'images/ametist.png',        name: 'Ametist' },
-    { id: 'kaplan-gozu',    src: 'images/kaplan-gozu.png',    name: 'Kaplan Gözü' },
-    { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' },
-    { id: 'malakit',        src: 'images/malakit.png',        name: 'Malakit' },
-    { id: 'fluorit',        src: 'images/fluorit.png',        name: 'Fluorit' }
+    { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' }
 ];
 
 let currentTheme = localStorage.getItem('turkishwatch-theme') || 'stone-bg';
