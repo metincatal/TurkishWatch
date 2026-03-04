@@ -1,5 +1,5 @@
 /* ============================================
-   TÜRKÇE SAAT - Tek Ekran Tasarım
+   TÜRKÇE SAAT - Doğal Taş 3D Tasarım
    ============================================ */
 
 * {
@@ -14,7 +14,7 @@ html, body {
 }
 
 body {
-    background-color: #0a0a0a;
+    background-color: #080808;
     color: #fff;
     font-family: 'Outfit', sans-serif;
     display: flex;
@@ -34,73 +34,132 @@ body {
     gap: 16px;
 }
 
-/* ---- Saat Çerçevesi (Altın) ---- */
-.clock-frame {
+/* ============================================
+   3D DOĞAL TAŞ SAAT
+   ============================================ */
+.clock-stone {
     position: relative;
-    padding: 12px;
-    border-radius: 4px;
-    background: linear-gradient(145deg, #e8d48b, #b8962e, #e8d48b, #b8962e);
-    background-size: 200% 200%;
-    box-shadow:
-        0 25px 80px rgba(0, 0, 0, 0.7),
-        0 0 1px 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
     flex-shrink: 0;
+    /* 3D perspektif */
+    transform: perspective(800px) rotateX(2deg) rotateY(-1deg);
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
 }
 
-/* ---- Saat Yüzeyi (Yeşil Mermer) ---- */
-.clock-surface {
-    border-radius: 2px;
+.clock-stone:hover {
+    transform: perspective(800px) rotateX(0deg) rotateY(0deg);
+}
+
+/* Taş yüzeyi */
+.stone-surface {
     position: relative;
     overflow: hidden;
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(34, 85, 60, 0.9) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(20, 60, 45, 0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 60%, rgba(40, 75, 55, 0.6) 0%, transparent 40%),
-        radial-gradient(ellipse at 30% 30%, rgba(15, 50, 40, 0.9) 0%, transparent 60%),
-        linear-gradient(135deg, #0d1f18 0%, #1a3528 20%, #0f2a1e 40%, #1d3d2c 60%, #0d2218 80%, #162e22 100%);
+    background-image: url('images/stone-bg.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+    z-index: 2;
 }
 
-/* Mermer damar efekti */
-.clock-surface::before {
-    content: '';
+/* Parlak yansıma efekti (taşın doğal parlaklığı) */
+.stone-shine {
     position: absolute;
     inset: 0;
-    opacity: 0.15;
-    background:
-        repeating-linear-gradient(
-            135deg,
-            transparent 0px, transparent 40px,
-            rgba(255, 255, 255, 0.08) 42px, transparent 44px,
-            transparent 90px,
-            rgba(255, 255, 255, 0.05) 91px, transparent 93px
-        ),
-        repeating-linear-gradient(
-            165deg,
-            transparent 0px, transparent 60px,
-            rgba(255, 255, 255, 0.06) 62px, transparent 64px,
-            transparent 120px,
-            rgba(255, 255, 255, 0.04) 121px, transparent 123px
-        );
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(255, 255, 255, 0.03) 100%
+    );
     pointer-events: none;
+    z-index: 3;
+    border-radius: 6px;
+}
+
+/* ---- 3D Kenar Derinlikleri ---- */
+.stone-edge {
+    position: absolute;
     z-index: 1;
 }
 
-/* ---- Köşe Noktaları (Yeşil yüzey içinde) ---- */
+/* Üst kenar */
+.stone-edge.edge-top {
+    top: -8px;
+    left: -4px;
+    right: -4px;
+    height: 10px;
+    background: linear-gradient(180deg, #0a1510, #0f2018);
+    border-radius: 6px 6px 0 0;
+    transform: perspective(400px) rotateX(40deg);
+    transform-origin: bottom;
+}
+
+/* Alt kenar */
+.stone-edge.edge-bottom {
+    bottom: -8px;
+    left: -4px;
+    right: -4px;
+    height: 10px;
+    background: linear-gradient(0deg, #060d0a, #0a1510);
+    border-radius: 0 0 6px 6px;
+    transform: perspective(400px) rotateX(-40deg);
+    transform-origin: top;
+}
+
+/* Sol kenar */
+.stone-edge.edge-left {
+    top: -4px;
+    bottom: -4px;
+    left: -8px;
+    width: 10px;
+    background: linear-gradient(90deg, #060d0a, #0f2018);
+    border-radius: 6px 0 0 6px;
+    transform: perspective(400px) rotateY(-40deg);
+    transform-origin: right;
+}
+
+/* Sağ kenar */
+.stone-edge.edge-right {
+    top: -4px;
+    bottom: -4px;
+    right: -8px;
+    width: 10px;
+    background: linear-gradient(270deg, #060d0a, #0a1510);
+    border-radius: 0 6px 6px 0;
+    transform: perspective(400px) rotateY(40deg);
+    transform-origin: left;
+}
+
+/* Gölge (zemine düşen) */
+.clock-stone::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 5%;
+    right: 5%;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+    filter: blur(10px);
+    z-index: 0;
+    transform: translateZ(-10px);
+}
+
+/* ---- Köşe Noktaları ---- */
 .corner-dot {
     position: absolute;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: rgba(180, 160, 100, 0.25);
+    background: rgba(180, 160, 100, 0.2);
     z-index: 10;
     transition: all 0.4s ease;
 }
 
-.corner-dot.top-left { top: 12px; left: 12px; }
-.corner-dot.top-right { top: 12px; right: 12px; }
-.corner-dot.bottom-left { bottom: 12px; left: 12px; }
-.corner-dot.bottom-right { bottom: 12px; right: 12px; }
+.corner-dot.top-left { top: 14px; left: 14px; }
+.corner-dot.top-right { top: 14px; right: 14px; }
+.corner-dot.bottom-left { bottom: 14px; left: 14px; }
+.corner-dot.bottom-right { bottom: 14px; right: 14px; }
 
 .corner-dot.active {
     background: #ffeebb;
@@ -111,24 +170,21 @@ body {
 .grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    /* Sabit gap: her cihazda aynı oran */
     gap: 0;
     position: relative;
-    z-index: 2;
-    /* Padding: çerçeveden eşit mesafe, grid boyutuna göre oransal */
+    z-index: 4;
     padding: 14%;
 }
 
 .letter {
     font-weight: 600;
-    color: rgba(180, 160, 100, 0.3);
+    color: rgba(160, 150, 110, 0.28);
     transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.4s ease;
     text-transform: uppercase;
     user-select: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Harf boyutu ve aralık tamamen aspect-ratio tabanlı */
     aspect-ratio: 1;
     font-size: 1.45cqi;
     letter-spacing: 0.5px;
@@ -136,7 +192,10 @@ body {
 
 .letter.active {
     color: #ffeebb;
-    text-shadow: 0 0 8px rgba(255, 238, 187, 0.8), 0 0 20px rgba(255, 238, 187, 0.5);
+    text-shadow:
+        0 0 6px rgba(255, 238, 187, 0.9),
+        0 0 15px rgba(255, 238, 187, 0.6),
+        0 0 30px rgba(255, 220, 150, 0.3);
     transform: scale(1.08);
     font-weight: 700;
 }
@@ -151,8 +210,8 @@ body {
 
 .bottom-bar input[type="time"] {
     background: #111;
-    color: #b8962e;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8a7a40;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 8px 14px;
     font-size: 1rem;
     border-radius: 8px;
@@ -164,13 +223,13 @@ body {
 }
 
 .bottom-bar input[type="time"]:focus {
-    border-color: #b8962e;
+    border-color: #8a7a40;
 }
 
 .themes-btn {
-    background: linear-gradient(145deg, #b8962e, #8e731c);
-    color: #fff;
-    border: none;
+    background: linear-gradient(145deg, #2a3a2e, #1a2a1e);
+    color: rgba(200, 190, 140, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 8px 24px;
     font-size: 1rem;
     font-family: inherit;
@@ -178,12 +237,13 @@ body {
     border-radius: 8px;
     cursor: pointer;
     letter-spacing: 1px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .themes-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(184, 150, 46, 0.3);
+    background: linear-gradient(145deg, #3a4a3e, #2a3a2e);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================
@@ -210,8 +270,8 @@ body {
 }
 
 .modal {
-    background: #111;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #0e0e0e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 16px;
     width: 92vw;
     max-width: 900px;
@@ -231,7 +291,6 @@ body {
 .modal-header {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
     padding: 12px 16px 0;
     flex-shrink: 0;
 }
@@ -239,7 +298,7 @@ body {
 .modal-close {
     background: none;
     border: none;
-    color: #888;
+    color: #666;
     font-size: 2rem;
     cursor: pointer;
     line-height: 1;
@@ -257,7 +316,6 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* ---- Galeri ---- */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -269,7 +327,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    border: 3px solid rgba(184, 150, 46, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.06);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     aspect-ratio: 1;
     background: #1a1a1a;
@@ -278,7 +336,7 @@ body {
 .gallery-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-    border-color: rgba(184, 150, 46, 0.7);
+    border-color: rgba(160, 150, 110, 0.4);
 }
 
 .gallery-card img {
@@ -308,7 +366,7 @@ body {
 }
 
 /* ============================================
-   LIGHTBOX (Tam Ekran Görsel)
+   LIGHTBOX
    ============================================ */
 .lightbox {
     position: fixed;
@@ -363,10 +421,9 @@ body {
 }
 
 /* ============================================
-   RESPONSIVE - Saat her yerde aynı oran
+   RESPONSIVE
    ============================================ */
 
-/* Container query desteği olmayan tarayıcılar için fallback */
 @supports not (font-size: 1cqi) {
     .letter {
         font-size: clamp(0.65rem, 2.5vmin, 1.4rem);
@@ -379,19 +436,26 @@ body {
         gap: 10px;
     }
 
-    .clock-frame {
-        padding: 8px;
-    }
-
     .corner-dot {
         width: 5px;
         height: 5px;
     }
 
-    .corner-dot.top-left { top: 8px; left: 8px; }
-    .corner-dot.top-right { top: 8px; right: 8px; }
-    .corner-dot.bottom-left { bottom: 8px; left: 8px; }
-    .corner-dot.bottom-right { bottom: 8px; right: 8px; }
+    .corner-dot.top-left { top: 10px; left: 10px; }
+    .corner-dot.top-right { top: 10px; right: 10px; }
+    .corner-dot.bottom-left { bottom: 10px; left: 10px; }
+    .corner-dot.bottom-right { bottom: 10px; right: 10px; }
+
+    .stone-edge.edge-top,
+    .stone-edge.edge-bottom { height: 7px; }
+
+    .stone-edge.edge-left,
+    .stone-edge.edge-right { width: 7px; }
+
+    .stone-edge.edge-top { top: -6px; }
+    .stone-edge.edge-bottom { bottom: -6px; }
+    .stone-edge.edge-left { left: -6px; }
+    .stone-edge.edge-right { right: -6px; }
 
     .bottom-bar input[type="time"] {
         padding: 6px 10px;
@@ -413,9 +477,5 @@ body {
     .app {
         padding: 8px;
         gap: 6px;
-    }
-
-    .clock-frame {
-        padding: 6px;
     }
 }

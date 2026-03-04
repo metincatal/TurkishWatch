@@ -9,12 +9,19 @@
 </head>
 <body>
     <div class="app">
-        <div class="clock-frame">
-            <div class="clock-surface">
-                <div class="dot corner-dot top-left" id="dot-1"></div>
-                <div class="dot corner-dot top-right" id="dot-2"></div>
-                <div class="dot corner-dot bottom-left" id="dot-3"></div>
-                <div class="dot corner-dot bottom-right" id="dot-4"></div>
+        <div class="clock-stone" id="clockStone">
+            <!-- 3D kenar derinliği -->
+            <div class="stone-edge edge-top"></div>
+            <div class="stone-edge edge-right"></div>
+            <div class="stone-edge edge-bottom"></div>
+            <div class="stone-edge edge-left"></div>
+            <!-- Taş yüzey -->
+            <div class="stone-surface">
+                <div class="corner-dot top-left" id="dot-1"></div>
+                <div class="corner-dot top-right" id="dot-2"></div>
+                <div class="corner-dot bottom-left" id="dot-3"></div>
+                <div class="corner-dot bottom-right" id="dot-4"></div>
+                <div class="stone-shine"></div>
                 <div id="grid" class="grid"></div>
             </div>
         </div>

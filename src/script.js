@@ -199,35 +199,28 @@ function displayTime(h, m) {
 }
 
 // ============================================
-// SAAT BOYUTLANDIRMA - Her cihazda aynı görünüm
+// SAAT BOYUTLANDIRMA
 // ============================================
 
 function resizeClock() {
-    const app = document.querySelector('.app');
-    const frame = document.querySelector('.clock-frame');
+    const stone = document.querySelector('.clock-stone');
     const bottomBar = document.querySelector('.bottom-bar');
 
-    // Kullanılabilir yükseklik: viewport - alt bar - boşluklar
     const barHeight = bottomBar.offsetHeight;
     const gap = 16;
-    const padding = 40; // app padding üst + alt
+    const padding = 40;
     const availableH = window.innerHeight - barHeight - gap - padding;
-    const availableW = window.innerWidth - 40; // app padding sol + sağ
+    const availableW = window.innerWidth - 40;
 
-    // Kare saat: en küçük boyutu al
     const size = Math.min(availableH, availableW, 600);
-    frame.style.width = size + 'px';
-    frame.style.height = size + 'px';
+    const surface = document.querySelector('.stone-surface');
+    surface.style.width = size + 'px';
+    surface.style.height = size + 'px';
 
-    // Font boyutunu saat boyutuna göre oranla
-    const gridEl = document.querySelector('.grid');
-    if (gridEl) {
-        const fontSize = size * 0.032;
-        gridEl.style.fontSize = fontSize + 'px';
-        document.querySelectorAll('.letter').forEach(el => {
-            el.style.fontSize = fontSize + 'px';
-        });
-    }
+    const fontSize = size * 0.032;
+    document.querySelectorAll('.letter').forEach(el => {
+        el.style.fontSize = fontSize + 'px';
+    });
 }
 
 // ============================================
