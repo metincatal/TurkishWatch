@@ -31,13 +31,13 @@ body {
     height: 100dvh;
     width: 100%;
     padding: 20px;
-    gap: 20px;
+    gap: 16px;
 }
 
-/* ---- Saat Çerçevesi ---- */
+/* ---- Saat Çerçevesi (Altın) ---- */
 .clock-frame {
     position: relative;
-    padding: 14px;
+    padding: 12px;
     border-radius: 4px;
     background: linear-gradient(145deg, #e8d48b, #b8962e, #e8d48b, #b8962e);
     background-size: 200% 200%;
@@ -48,31 +48,9 @@ body {
     flex-shrink: 0;
 }
 
-/* ---- Köşe Noktaları (Ara dakika göstergeleri) ---- */
-.corner-dot {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(180, 160, 100, 0.25);
-    z-index: 10;
-    transition: all 0.4s ease;
-}
-
-.corner-dot.top-left { top: 10px; left: 10px; }
-.corner-dot.top-right { top: 10px; right: 10px; }
-.corner-dot.bottom-left { bottom: 10px; left: 10px; }
-.corner-dot.bottom-right { bottom: 10px; right: 10px; }
-
-.corner-dot.active {
-    background: #ffeebb;
-    box-shadow: 0 0 8px rgba(255, 238, 187, 0.9), 0 0 20px rgba(255, 238, 187, 0.6);
-}
-
 /* ---- Saat Yüzeyi (Yeşil Mermer) ---- */
 .clock-surface {
     border-radius: 2px;
-    padding: clamp(24px, 5.5vw, 55px);
     position: relative;
     overflow: hidden;
     background:
@@ -108,17 +86,40 @@ body {
     z-index: 1;
 }
 
+/* ---- Köşe Noktaları (Yeşil yüzey içinde) ---- */
+.corner-dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(180, 160, 100, 0.25);
+    z-index: 10;
+    transition: all 0.4s ease;
+}
+
+.corner-dot.top-left { top: 12px; left: 12px; }
+.corner-dot.top-right { top: 12px; right: 12px; }
+.corner-dot.bottom-left { bottom: 12px; left: 12px; }
+.corner-dot.bottom-right { bottom: 12px; right: 12px; }
+
+.corner-dot.active {
+    background: #ffeebb;
+    box-shadow: 0 0 8px rgba(255, 238, 187, 0.9), 0 0 20px rgba(255, 238, 187, 0.6);
+}
+
 /* ---- Grid ---- */
 .grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: clamp(4px, 1.5vw, 12px);
+    /* Sabit gap: her cihazda aynı oran */
+    gap: 0;
     position: relative;
     z-index: 2;
+    /* Padding: çerçeveden eşit mesafe, grid boyutuna göre oransal */
+    padding: 14%;
 }
 
 .letter {
-    font-size: clamp(0.7rem, 2.6vw, 1.45rem);
     font-weight: 600;
     color: rgba(180, 160, 100, 0.3);
     transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.4s ease;
@@ -127,9 +128,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: clamp(14px, 4.8vw, 28px);
-    height: clamp(14px, 4.8vw, 28px);
-    letter-spacing: 1px;
+    /* Harf boyutu ve aralık tamamen aspect-ratio tabanlı */
+    aspect-ratio: 1;
+    font-size: 1.45cqi;
+    letter-spacing: 0.5px;
 }
 
 .letter.active {
@@ -190,9 +192,9 @@ body {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -211,10 +213,10 @@ body {
     background: #111;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    width: 90vw;
+    width: 92vw;
     max-width: 900px;
-    max-height: 90vh;
-    max-height: 90dvh;
+    max-height: 88vh;
+    max-height: 88dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -228,25 +230,17 @@ body {
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 16px 0;
     flex-shrink: 0;
-}
-
-.modal-header h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #b8962e;
-    letter-spacing: 2px;
 }
 
 .modal-close {
     background: none;
     border: none;
     color: #888;
-    font-size: 1.8rem;
+    font-size: 2rem;
     cursor: pointer;
     line-height: 1;
     padding: 4px 8px;
@@ -258,7 +252,7 @@ body {
 }
 
 .modal-body {
-    padding: 20px;
+    padding: 12px 20px 20px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -266,16 +260,16 @@ body {
 /* ---- Galeri ---- */
 .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
 }
 
 .gallery-card {
     position: relative;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    border: 3px solid transparent;
+    border: 3px solid rgba(184, 150, 46, 0.3);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     aspect-ratio: 1;
     background: #1a1a1a;
@@ -284,7 +278,7 @@ body {
 .gallery-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-    border-color: rgba(184, 150, 46, 0.4);
+    border-color: rgba(184, 150, 46, 0.7);
 }
 
 .gallery-card img {
@@ -304,62 +298,89 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    padding: 30px 14px 12px;
+    padding: 24px 12px 10px;
     text-align: center;
     letter-spacing: 1px;
 }
 
-/* Çerçeve stilleri */
-.gallery-card::before {
-    content: '';
-    position: absolute;
+/* ============================================
+   LIGHTBOX (Tam Ekran Görsel)
+   ============================================ */
+.lightbox {
+    position: fixed;
     inset: 0;
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
     pointer-events: none;
-    z-index: 2;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
 }
 
-.gallery-card:nth-child(1)::before {
-    box-shadow: inset 0 0 0 4px rgba(184, 150, 46, 0.5);
+.lightbox.open {
+    opacity: 1;
+    pointer-events: all;
 }
 
-.gallery-card:nth-child(2)::before {
-    box-shadow: inset 0 0 0 4px rgba(200, 160, 130, 0.5);
+.lightbox img {
+    max-width: 92vw;
+    max-height: 92vh;
+    max-height: 92dvh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
 }
 
-.gallery-card:nth-child(3)::before {
-    box-shadow: inset 0 0 0 4px rgba(200, 190, 160, 0.5);
+.lightbox.open img {
+    transform: scale(1);
 }
 
-.gallery-card:nth-child(4)::before {
-    box-shadow: inset 0 0 0 4px rgba(100, 160, 180, 0.5);
+.lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 2.5rem;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    transition: color 0.2s;
 }
 
-.gallery-card:nth-child(5)::before {
-    box-shadow: inset 0 0 0 4px rgba(180, 160, 100, 0.5);
+.lightbox-close:hover {
+    color: #fff;
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE - Saat her yerde aynı oran
    ============================================ */
 
-/* Landscape modda yüksekliği kontrol et */
-@media (max-height: 700px) {
+/* Container query desteği olmayan tarayıcılar için fallback */
+@supports not (font-size: 1cqi) {
+    .letter {
+        font-size: clamp(0.65rem, 2.5vmin, 1.4rem);
+    }
+}
+
+@media (max-width: 480px) {
     .app {
-        padding: 10px;
+        padding: 12px 8px;
         gap: 10px;
     }
 
     .clock-frame {
-        padding: 10px;
-    }
-
-    .clock-surface {
-        padding: clamp(14px, 3vw, 30px);
+        padding: 8px;
     }
 
     .corner-dot {
@@ -367,52 +388,10 @@ body {
         height: 5px;
     }
 
-    .corner-dot.top-left { top: 7px; left: 7px; }
-    .corner-dot.top-right { top: 7px; right: 7px; }
-    .corner-dot.bottom-left { bottom: 7px; left: 7px; }
-    .corner-dot.bottom-right { bottom: 7px; right: 7px; }
-}
-
-@media (max-height: 500px) {
-    .clock-surface {
-        padding: clamp(8px, 2vw, 16px);
-    }
-
-    .grid {
-        gap: clamp(2px, 0.8vw, 6px);
-    }
-
-    .letter {
-        font-size: clamp(0.5rem, 1.8vh, 1rem);
-        width: clamp(10px, 3.5vh, 22px);
-        height: clamp(10px, 3.5vh, 22px);
-    }
-}
-
-/* Mobil */
-@media (max-width: 480px) {
-    .app {
-        padding: 12px 8px;
-        gap: 12px;
-    }
-
-    .clock-frame {
-        padding: 8px;
-    }
-
-    .clock-surface {
-        padding: clamp(16px, 4vw, 30px);
-    }
-
-    .grid {
-        gap: clamp(3px, 1.2vw, 8px);
-    }
-
-    .letter {
-        width: clamp(14px, 6.5vw, 24px);
-        height: clamp(14px, 6.5vw, 24px);
-        font-size: clamp(0.55rem, 2.4vw, 1rem);
-    }
+    .corner-dot.top-left { top: 8px; left: 8px; }
+    .corner-dot.top-right { top: 8px; right: 8px; }
+    .corner-dot.bottom-left { bottom: 8px; left: 8px; }
+    .corner-dot.bottom-right { bottom: 8px; right: 8px; }
 
     .bottom-bar input[type="time"] {
         padding: 6px 10px;
@@ -426,29 +405,17 @@ body {
 
     .gallery {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 10px;
     }
-
-    .corner-dot {
-        width: 5px;
-        height: 5px;
-    }
-
-    .corner-dot.top-left { top: 6px; left: 6px; }
-    .corner-dot.top-right { top: 6px; right: 6px; }
-    .corner-dot.bottom-left { bottom: 6px; left: 6px; }
-    .corner-dot.bottom-right { bottom: 6px; right: 6px; }
 }
 
-@media (max-width: 360px) {
-    .letter {
-        width: clamp(12px, 6vw, 20px);
-        height: clamp(12px, 6vw, 20px);
-        font-size: clamp(0.5rem, 2.2vw, 0.85rem);
-        letter-spacing: 0;
+@media (max-height: 500px) {
+    .app {
+        padding: 8px;
+        gap: 6px;
     }
 
-    .grid {
-        gap: 2px;
+    .clock-frame {
+        padding: 6px;
     }
 }

@@ -5,11 +5,11 @@
 // ============================================
 
 const GALLERY_ITEMS = [
-    { src: '../images/ornek1.jpg', name: 'Yeşil Mermer' },
-    { src: '../images/ornek2.jpg', name: 'Bakır Mermer' },
-    { src: '../images/ornek3.jpg', name: 'Altın Mermer' },
-    { src: '../images/ornek5.jpg', name: 'Ebru Sanatı' },
-    { src: '../images/ornek6.jpg', name: 'Antik Parşömen' }
+    { src: 'images/ornek1.jpg', name: 'Yeşil Mermer' },
+    { src: 'images/ornek2.jpg', name: 'Bakır Mermer' },
+    { src: 'images/ornek3.jpg', name: 'Altın Mermer' },
+    { src: 'images/ornek5.jpg', name: 'Ebru Sanatı' },
+    { src: 'images/ornek6.jpg', name: 'Antik Parşömen' }
 ];
 
 function initGallery() {
@@ -21,6 +21,7 @@ function initGallery() {
             <img src="${item.src}" alt="${item.name}" loading="lazy">
             <div class="gallery-card-label">${item.name}</div>
         `;
+        card.addEventListener('click', () => openLightbox(item.src));
         gallery.appendChild(card);
     });
 }
@@ -30,22 +31,36 @@ const modalOverlay = document.getElementById('modalOverlay');
 const themesBtn = document.getElementById('themesBtn');
 const modalClose = document.getElementById('modalClose');
 
-themesBtn.addEventListener('click', () => {
-    modalOverlay.classList.add('open');
-});
-
-modalClose.addEventListener('click', () => {
-    modalOverlay.classList.remove('open');
-});
-
+themesBtn.addEventListener('click', () => modalOverlay.classList.add('open'));
+modalClose.addEventListener('click', () => modalOverlay.classList.remove('open'));
 modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) {
-        modalOverlay.classList.remove('open');
-    }
+    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
 });
+
+// Lightbox aç/kapa
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxClose = document.getElementById('lightboxClose');
+
+function openLightbox(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add('open');
+    modalOverlay.classList.remove('open');
+}
+
+lightboxClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    lightbox.classList.remove('open');
+});
+
+lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+lightboxImg.addEventListener('click', (e) => e.stopPropagation());
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') modalOverlay.classList.remove('open');
+    if (e.key === 'Escape') {
+        lightbox.classList.remove('open');
+        modalOverlay.classList.remove('open');
+    }
 });
 
 // ============================================
@@ -184,11 +199,45 @@ function displayTime(h, m) {
 }
 
 // ============================================
+// SAAT BOYUTLANDIRMA - Her cihazda aynı görünüm
+// ============================================
+
+function resizeClock() {
+    const app = document.querySelector('.app');
+    const frame = document.querySelector('.clock-frame');
+    const bottomBar = document.querySelector('.bottom-bar');
+
+    // Kullanılabilir yükseklik: viewport - alt bar - boşluklar
+    const barHeight = bottomBar.offsetHeight;
+    const gap = 16;
+    const padding = 40; // app padding üst + alt
+    const availableH = window.innerHeight - barHeight - gap - padding;
+    const availableW = window.innerWidth - 40; // app padding sol + sağ
+
+    // Kare saat: en küçük boyutu al
+    const size = Math.min(availableH, availableW, 600);
+    frame.style.width = size + 'px';
+    frame.style.height = size + 'px';
+
+    // Font boyutunu saat boyutuna göre oranla
+    const gridEl = document.querySelector('.grid');
+    if (gridEl) {
+        const fontSize = size * 0.032;
+        gridEl.style.fontSize = fontSize + 'px';
+        document.querySelectorAll('.letter').forEach(el => {
+            el.style.fontSize = fontSize + 'px';
+        });
+    }
+}
+
+// ============================================
 // BAŞLATMA
 // ============================================
 
 initializeGrid();
 initGallery();
+resizeClock();
+window.addEventListener('resize', resizeClock);
 
 const inputElement = document.getElementById("timeInput");
 
@@ -201,7 +250,6 @@ function updateClock() {
 }
 
 let userOverride = false;
-
 updateClock();
 
 setInterval(() => {
@@ -214,7 +262,6 @@ inputElement.addEventListener("input", (e) => {
         userOverride = true;
         const [hStr, mStr] = timeVal.split(":");
         displayTime(parseInt(hStr, 10), parseInt(mStr, 10));
-        // 60 saniye sonra otomatik moda dön
         setTimeout(() => { userOverride = false; }, 60000);
     }
 });

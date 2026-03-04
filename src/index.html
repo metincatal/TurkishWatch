@@ -10,11 +10,11 @@
 <body>
     <div class="app">
         <div class="clock-frame">
-            <div class="dot corner-dot top-left" id="dot-1"></div>
-            <div class="dot corner-dot top-right" id="dot-2"></div>
-            <div class="dot corner-dot bottom-left" id="dot-3"></div>
-            <div class="dot corner-dot bottom-right" id="dot-4"></div>
             <div class="clock-surface">
+                <div class="dot corner-dot top-left" id="dot-1"></div>
+                <div class="dot corner-dot top-right" id="dot-2"></div>
+                <div class="dot corner-dot bottom-left" id="dot-3"></div>
+                <div class="dot corner-dot bottom-right" id="dot-4"></div>
                 <div id="grid" class="grid"></div>
             </div>
         </div>
@@ -29,13 +29,18 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
-                <h2>Temalar</h2>
                 <button class="modal-close" id="modalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="gallery" id="gallery"></div>
             </div>
         </div>
+    </div>
+
+    <!-- Görsel Tam Ekran -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <img id="lightboxImg" src="" alt="">
     </div>
 
     <script src="script.js"></script>
