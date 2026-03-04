@@ -1,5 +1,5 @@
 /* ============================================
-   TÜRKÇE SAAT - Doğal Taş & Ebru Tema Sistemi
+   TÜRKÇE SAAT - Tek Ekran Tasarım
    ============================================ */
 
 * {
@@ -8,59 +8,30 @@
     box-sizing: border-box;
 }
 
-:root {
-    /* Varsayılan tema: Yeşil Mermer */
-    --frame-color: #b8962e;
-    --frame-shine: #e8d48b;
-    --surface-bg: #1a2a22;
-    --text-off: rgba(180, 160, 100, 0.3);
-    --text-on: #ffeebb;
-    --glow-color: rgba(255, 238, 187, 0.8);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(255, 238, 187, 0.9);
-    --dot-off: rgba(180, 160, 100, 0.3);
-    --dot-on: #ffeebb;
-    --accent: #b8962e;
+html, body {
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
     background-color: #0a0a0a;
     color: #fff;
     font-family: 'Outfit', sans-serif;
-    min-height: 100vh;
-    margin: 0;
     display: flex;
     justify-content: center;
-    overflow-x: hidden;
-}
-
-.app {
-    width: 100%;
-    max-width: 800px;
-    padding: 30px 20px 60px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
 }
 
-/* ---- Header ---- */
-.header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.header h1 {
-    font-weight: 700;
-    font-size: clamp(1.6rem, 5vw, 2.5rem);
-    letter-spacing: 6px;
-    color: var(--accent);
-}
-
-.subtitle {
-    color: #666;
-    font-size: clamp(0.8rem, 2.5vw, 1rem);
-    margin-top: 6px;
-    font-weight: 300;
+.app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    padding: 20px;
+    gap: 20px;
 }
 
 /* ---- Saat Çerçevesi ---- */
@@ -68,40 +39,73 @@ body {
     position: relative;
     padding: 14px;
     border-radius: 4px;
-    background: linear-gradient(145deg, var(--frame-shine), var(--frame-color), var(--frame-shine), var(--frame-color));
+    background: linear-gradient(145deg, #e8d48b, #b8962e, #e8d48b, #b8962e);
     background-size: 200% 200%;
     box-shadow:
         0 25px 80px rgba(0, 0, 0, 0.7),
         0 0 1px 1px rgba(255, 255, 255, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    margin-bottom: 30px;
-    width: fit-content;
-    max-width: 100%;
+    flex-shrink: 0;
 }
 
-/* Köşe ışıkları */
-.corner-light {
+/* ---- Köşe Noktaları (Ara dakika göstergeleri) ---- */
+.corner-dot {
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--corner-light);
-    box-shadow: 0 0 8px var(--corner-light), 0 0 20px var(--corner-light);
+    background: rgba(180, 160, 100, 0.25);
     z-index: 10;
+    transition: all 0.4s ease;
 }
 
-.corner-light.top-left { top: 8px; left: 8px; }
-.corner-light.top-right { top: 8px; right: 8px; }
-.corner-light.bottom-left { bottom: 8px; left: 8px; }
-.corner-light.bottom-right { bottom: 8px; right: 8px; }
+.corner-dot.top-left { top: 10px; left: 10px; }
+.corner-dot.top-right { top: 10px; right: 10px; }
+.corner-dot.bottom-left { bottom: 10px; left: 10px; }
+.corner-dot.bottom-right { bottom: 10px; right: 10px; }
 
-/* ---- Saat Yüzeyi (Taş/Ebru Dokusu) ---- */
+.corner-dot.active {
+    background: #ffeebb;
+    box-shadow: 0 0 8px rgba(255, 238, 187, 0.9), 0 0 20px rgba(255, 238, 187, 0.6);
+}
+
+/* ---- Saat Yüzeyi (Yeşil Mermer) ---- */
 .clock-surface {
     border-radius: 2px;
-    padding: clamp(16px, 4vw, 40px);
+    padding: clamp(24px, 5.5vw, 55px);
     position: relative;
     overflow: hidden;
-    /* Varsayılan arka plan JS tarafından ayarlanacak */
+    background:
+        radial-gradient(ellipse at 20% 80%, rgba(34, 85, 60, 0.9) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(20, 60, 45, 0.8) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 60%, rgba(40, 75, 55, 0.6) 0%, transparent 40%),
+        radial-gradient(ellipse at 30% 30%, rgba(15, 50, 40, 0.9) 0%, transparent 60%),
+        linear-gradient(135deg, #0d1f18 0%, #1a3528 20%, #0f2a1e 40%, #1d3d2c 60%, #0d2218 80%, #162e22 100%);
+}
+
+/* Mermer damar efekti */
+.clock-surface::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+    background:
+        repeating-linear-gradient(
+            135deg,
+            transparent 0px, transparent 40px,
+            rgba(255, 255, 255, 0.08) 42px, transparent 44px,
+            transparent 90px,
+            rgba(255, 255, 255, 0.05) 91px, transparent 93px
+        ),
+        repeating-linear-gradient(
+            165deg,
+            transparent 0px, transparent 60px,
+            rgba(255, 255, 255, 0.06) 62px, transparent 64px,
+            transparent 120px,
+            rgba(255, 255, 255, 0.04) 121px, transparent 123px
+        );
+    pointer-events: none;
+    z-index: 1;
 }
 
 /* ---- Grid ---- */
@@ -114,580 +118,328 @@ body {
 }
 
 .letter {
-    font-size: clamp(0.75rem, 2.8vw, 1.5rem);
+    font-size: clamp(0.7rem, 2.6vw, 1.45rem);
     font-weight: 600;
-    color: var(--text-off);
+    color: rgba(180, 160, 100, 0.3);
     transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.4s ease;
     text-transform: uppercase;
     user-select: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: clamp(16px, 5vw, 30px);
-    height: clamp(16px, 5vw, 30px);
+    width: clamp(14px, 4.8vw, 28px);
+    height: clamp(14px, 4.8vw, 28px);
     letter-spacing: 1px;
 }
 
 .letter.active {
-    color: var(--text-on);
-    text-shadow: var(--glow);
+    color: #ffeebb;
+    text-shadow: 0 0 8px rgba(255, 238, 187, 0.8), 0 0 20px rgba(255, 238, 187, 0.5);
     transform: scale(1.08);
     font-weight: 700;
 }
 
-/* ---- Noktalar ---- */
-.dots-wrapper {
+/* ---- Alt Bar ---- */
+.bottom-bar {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 30px;
-}
-
-.dots {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--dot-off);
-    transition: all 0.4s ease;
-}
-
-.dot.active {
-    background-color: var(--dot-on);
-    box-shadow: var(--glow);
-    transform: scale(1.3);
-}
-
-.dot-info {
-    font-size: 0.7rem;
-    color: #555;
-}
-
-/* ---- Kontroller ---- */
-.controls-section {
-    margin-bottom: 40px;
-    width: 100%;
-    max-width: 320px;
-}
-
-.time-control {
-    background: rgba(255, 255, 255, 0.04);
-    padding: 20px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     gap: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
 }
 
-.time-control label {
-    font-size: 1rem;
-    color: #999;
-    font-weight: 400;
-}
-
-.time-control input[type="time"] {
+.bottom-bar input[type="time"] {
     background: #111;
-    color: var(--accent);
+    color: #b8962e;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 10px 16px;
-    font-size: 1.3rem;
+    padding: 8px 14px;
+    font-size: 1rem;
     border-radius: 8px;
     font-family: inherit;
     cursor: pointer;
-    width: 100%;
     text-align: center;
     outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
-.time-control input[type="time"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 15px rgba(184, 150, 46, 0.2);
+.bottom-bar input[type="time"]:focus {
+    border-color: #b8962e;
 }
 
-/* ---- Tema Seçimi ---- */
-.theme-section {
-    width: 100%;
-    max-width: 640px;
+.themes-btn {
+    background: linear-gradient(145deg, #b8962e, #8e731c);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.theme-title {
-    font-size: 1.1rem;
-    font-weight: 400;
-    color: #888;
-    text-align: center;
-    margin-bottom: 20px;
+.themes-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(184, 150, 46, 0.3);
+}
+
+/* ============================================
+   TEMA MODALI
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    width: 90vw;
+    max-width: 900px;
+    max-height: 90vh;
+    max-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.open .modal {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #b8962e;
     letter-spacing: 2px;
 }
 
-.theme-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 14px;
+.modal-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+    transition: color 0.2s;
 }
 
-.theme-card {
+.modal-close:hover {
+    color: #fff;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Galeri ---- */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.gallery-card {
     position: relative;
-    cursor: pointer;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    border: 2px solid transparent;
+    cursor: pointer;
+    border: 3px solid transparent;
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     aspect-ratio: 1;
+    background: #1a1a1a;
 }
 
-.theme-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    border-color: rgba(184, 150, 46, 0.4);
 }
 
-.theme-card.active {
-    border-color: var(--accent);
-    box-shadow: 0 0 20px rgba(184, 150, 46, 0.3);
-}
-
-.theme-card-preview {
+.gallery-card img {
     width: 100%;
     height: 100%;
-    position: relative;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
 }
 
-.theme-card-label {
+.gallery-card:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-card-label {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    padding: 20px 10px 10px;
+    padding: 30px 14px 12px;
     text-align: center;
     letter-spacing: 1px;
 }
 
-/* ============================================
-   TEMA ARKA PLANLARI (CSS Gradient ile)
-   ============================================ */
-
-/* Yeşil Mermer (Resimdeki gibi) */
-.surface-yesil-mermer {
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(34, 85, 60, 0.9) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(20, 60, 45, 0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 60%, rgba(40, 75, 55, 0.6) 0%, transparent 40%),
-        radial-gradient(ellipse at 30% 30%, rgba(15, 50, 40, 0.9) 0%, transparent 60%),
-        linear-gradient(135deg, #0d1f18 0%, #1a3528 20%, #0f2a1e 40%, #1d3d2c 60%, #0d2218 80%, #162e22 100%);
-}
-
-/* Koyu Mermer / Siyah Granit */
-.surface-siyah-mermer {
-    background:
-        radial-gradient(ellipse at 25% 75%, rgba(50, 50, 55, 0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 75% 25%, rgba(40, 40, 48, 0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(30, 30, 35, 0.7) 0%, transparent 40%),
-        linear-gradient(160deg, #0d0d0f 0%, #1a1a1f 25%, #0f0f12 50%, #1c1c22 75%, #0d0d10 100%);
-}
-
-/* Beyaz Mermer / Carrara */
-.surface-beyaz-mermer {
-    background:
-        radial-gradient(ellipse at 20% 50%, rgba(200, 195, 190, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 30%, rgba(180, 175, 170, 0.3) 0%, transparent 40%),
-        radial-gradient(ellipse at 40% 80%, rgba(190, 185, 180, 0.35) 0%, transparent 45%),
-        linear-gradient(135deg, #e8e4e0 0%, #d5d0cb 20%, #e2ded9 40%, #ccc7c2 60%, #e0dbd6 80%, #d8d3ce 100%);
-}
-
-/* Labradorit (Koyu mavi-yeşil doğal taş) */
-.surface-labradorit {
-    background:
-        radial-gradient(ellipse at 30% 70%, rgba(20, 50, 90, 0.9) 0%, transparent 45%),
-        radial-gradient(ellipse at 70% 30%, rgba(30, 70, 80, 0.7) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(15, 40, 70, 0.8) 0%, transparent 40%),
-        radial-gradient(ellipse at 80% 80%, rgba(25, 55, 65, 0.6) 0%, transparent 45%),
-        linear-gradient(145deg, #0a1628 0%, #0f2035 20%, #0c1a2e 40%, #112840 60%, #0a1525 80%, #0e1e32 100%);
-}
-
-/* Ebru Sanatı - Turkuaz */
-.surface-ebru-turkuaz {
-    background:
-        radial-gradient(ellipse at 15% 85%, rgba(0, 128, 128, 0.6) 0%, transparent 40%),
-        radial-gradient(ellipse at 85% 15%, rgba(0, 80, 100, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 50% 50%, rgba(0, 100, 90, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 30% 20%, rgba(20, 60, 80, 0.7) 0%, transparent 45%),
-        radial-gradient(ellipse at 70% 70%, rgba(10, 90, 80, 0.5) 0%, transparent 40%),
-        conic-gradient(from 45deg at 40% 60%, rgba(0, 110, 100, 0.3), rgba(15, 70, 90, 0.3), rgba(0, 100, 110, 0.3), rgba(20, 80, 80, 0.3)),
-        linear-gradient(135deg, #0a2025 0%, #0d3035 25%, #082528 50%, #0f3540 75%, #0a2228 100%);
-}
-
-/* Ebru Sanatı - Bordo & Altın */
-.surface-ebru-bordo {
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(120, 20, 30, 0.7) 0%, transparent 45%),
-        radial-gradient(ellipse at 80% 20%, rgba(100, 15, 25, 0.5) 0%, transparent 45%),
-        radial-gradient(ellipse at 50% 50%, rgba(80, 10, 20, 0.6) 0%, transparent 40%),
-        radial-gradient(ellipse at 35% 35%, rgba(60, 8, 15, 0.8) 0%, transparent 50%),
-        conic-gradient(from 120deg at 60% 40%, rgba(90, 12, 22, 0.3), rgba(70, 10, 18, 0.4), rgba(110, 18, 28, 0.3)),
-        linear-gradient(150deg, #1a0508 0%, #2d0a10 25%, #1f0709 50%, #350c12 75%, #1a0508 100%);
-}
-
-/* Okyanus Jaspis */
-.surface-okyanus-jaspis {
-    background:
-        radial-gradient(ellipse at 25% 75%, rgba(20, 80, 60, 0.7) 0%, transparent 45%),
-        radial-gradient(ellipse at 75% 25%, rgba(50, 100, 80, 0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(30, 90, 70, 0.6) 0%, transparent 40%),
-        radial-gradient(ellipse at 60% 80%, rgba(60, 110, 90, 0.4) 0%, transparent 45%),
-        linear-gradient(135deg, #0a1a14 0%, #122a20 20%, #0e2018 40%, #163024 60%, #0c1c16 80%, #142820 100%);
-}
-
-/* Ametist (Mor doğal taş) */
-.surface-ametist {
-    background:
-        radial-gradient(ellipse at 20% 70%, rgba(80, 30, 100, 0.7) 0%, transparent 45%),
-        radial-gradient(ellipse at 80% 30%, rgba(60, 20, 80, 0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 45% 45%, rgba(50, 15, 70, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 70% 80%, rgba(70, 25, 90, 0.4) 0%, transparent 45%),
-        linear-gradient(140deg, #0f0818 0%, #1a0f28 25%, #120a1e 50%, #1e1230 75%, #0f0818 100%);
-}
-
-/* Kaplan Gözü (Amber/kahverengi doğal taş) */
-.surface-kaplan-gozu {
-    background:
-        radial-gradient(ellipse at 30% 70%, rgba(140, 90, 20, 0.6) 0%, transparent 45%),
-        radial-gradient(ellipse at 70% 30%, rgba(120, 70, 10, 0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(100, 60, 8, 0.7) 0%, transparent 40%),
-        radial-gradient(ellipse at 20% 30%, rgba(80, 50, 5, 0.6) 0%, transparent 50%),
-        linear-gradient(135deg, #1a1008 0%, #2a1a0c 25%, #1e1209 50%, #302010 75%, #1a1008 100%);
-}
-
-/* Ebru Sanatı - Çok Renkli */
-.surface-ebru-cokrenkli {
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(0, 100, 120, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 80% 20%, rgba(100, 30, 60, 0.4) 0%, transparent 40%),
-        radial-gradient(ellipse at 50% 50%, rgba(30, 80, 50, 0.4) 0%, transparent 35%),
-        radial-gradient(ellipse at 30% 30%, rgba(80, 60, 20, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 70% 70%, rgba(20, 50, 100, 0.5) 0%, transparent 40%),
-        conic-gradient(from 0deg at 50% 50%, rgba(0, 80, 100, 0.2), rgba(80, 20, 50, 0.2), rgba(20, 70, 40, 0.2), rgba(70, 50, 10, 0.2), rgba(0, 80, 100, 0.2)),
-        linear-gradient(135deg, #0a1215 0%, #150d12 25%, #0d1410 50%, #121015 75%, #0a1215 100%);
-}
-
-/* Gül Kuvarsı (Pembe doğal taş) */
-.surface-gul-kuvarsi {
-    background:
-        radial-gradient(ellipse at 25% 75%, rgba(160, 80, 90, 0.5) 0%, transparent 45%),
-        radial-gradient(ellipse at 75% 25%, rgba(140, 70, 80, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(130, 65, 75, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 40% 30%, rgba(120, 60, 70, 0.6) 0%, transparent 45%),
-        linear-gradient(135deg, #1a0e10 0%, #2a1518 25%, #1e1012 50%, #30181c 75%, #1a0e10 100%);
-}
-
-/* Lapis Lazuli (Koyu mavi doğal taş) */
-.surface-lapis-lazuli {
-    background:
-        radial-gradient(ellipse at 20% 80%, rgba(20, 40, 120, 0.7) 0%, transparent 45%),
-        radial-gradient(ellipse at 80% 20%, rgba(15, 30, 100, 0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(25, 45, 110, 0.5) 0%, transparent 40%),
-        radial-gradient(ellipse at 65% 75%, rgba(180, 160, 60, 0.15) 0%, transparent 25%),
-        linear-gradient(145deg, #060a22 0%, #0a1035 25%, #080c28 50%, #0c1240 75%, #060a22 100%);
-}
-
-/* ============================================
-   TEMA KARTLARI İÇİN PREVIEW YÜZEYLER
-   ============================================ */
-.theme-card-preview.preview-yesil-mermer { background: linear-gradient(135deg, #0d1f18, #1a3528, #0f2a1e, #1d3d2c); }
-.theme-card-preview.preview-siyah-mermer { background: linear-gradient(135deg, #0d0d0f, #1a1a1f, #0f0f12, #1c1c22); }
-.theme-card-preview.preview-beyaz-mermer { background: linear-gradient(135deg, #e8e4e0, #d5d0cb, #e2ded9, #ccc7c2); }
-.theme-card-preview.preview-labradorit { background: linear-gradient(135deg, #0a1628, #0f2035, #0c1a2e, #112840); }
-.theme-card-preview.preview-ebru-turkuaz { background: linear-gradient(135deg, #0a2025, #0d3035, #082528, #0f3540); }
-.theme-card-preview.preview-ebru-bordo { background: linear-gradient(135deg, #1a0508, #2d0a10, #1f0709, #350c12); }
-.theme-card-preview.preview-okyanus-jaspis { background: linear-gradient(135deg, #0a1a14, #122a20, #0e2018, #163024); }
-.theme-card-preview.preview-ametist { background: linear-gradient(135deg, #0f0818, #1a0f28, #120a1e, #1e1230); }
-.theme-card-preview.preview-kaplan-gozu { background: linear-gradient(135deg, #1a1008, #2a1a0c, #1e1209, #302010); }
-.theme-card-preview.preview-ebru-cokrenkli { background: linear-gradient(135deg, #0a1215, #150d12, #0d1410, #121015); }
-.theme-card-preview.preview-gul-kuvarsi { background: linear-gradient(135deg, #1a0e10, #2a1518, #1e1012, #30181c); }
-.theme-card-preview.preview-lapis-lazuli { background: linear-gradient(135deg, #060a22, #0a1035, #080c28, #0c1240); }
-
-/* Beyaz mermer teması için koyu metin */
-.theme-beyaz-mermer {
-    --text-off: rgba(120, 110, 100, 0.35);
-    --text-on: #2a2420;
-    --glow-color: rgba(42, 36, 32, 0.4);
-    --glow: 0 0 6px rgba(42, 36, 32, 0.3), 0 0 15px rgba(42, 36, 32, 0.15);
-    --corner-light: rgba(180, 160, 120, 0.6);
-    --dot-off: rgba(120, 110, 100, 0.35);
-    --dot-on: #2a2420;
-}
-
-/* Beyaz mermer preview kartındaki label */
-.theme-card-preview.preview-beyaz-mermer + .theme-card-label {
-    color: #333;
-    background: linear-gradient(transparent, rgba(255,255,255,0.85));
-}
-
-/* Ametist teması */
-.theme-ametist {
-    --frame-color: #6a3d8f;
-    --frame-shine: #a06bc4;
-    --text-off: rgba(160, 120, 200, 0.25);
-    --text-on: #e0c0ff;
-    --glow-color: rgba(224, 192, 255, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(224, 192, 255, 0.8);
-    --dot-off: rgba(160, 120, 200, 0.25);
-    --dot-on: #e0c0ff;
-    --accent: #8a5db0;
-}
-
-/* Labradorit teması */
-.theme-labradorit {
-    --frame-color: #2a5070;
-    --frame-shine: #5090b8;
-    --text-off: rgba(80, 140, 180, 0.25);
-    --text-on: #a0d8f0;
-    --glow-color: rgba(160, 216, 240, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(160, 216, 240, 0.8);
-    --dot-off: rgba(80, 140, 180, 0.25);
-    --dot-on: #a0d8f0;
-    --accent: #4080a8;
-}
-
-/* Ebru Turkuaz teması */
-.theme-ebru-turkuaz {
-    --frame-color: #1a6060;
-    --frame-shine: #40a0a0;
-    --text-off: rgba(60, 160, 150, 0.25);
-    --text-on: #80f0e0;
-    --glow-color: rgba(128, 240, 224, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(128, 240, 224, 0.8);
-    --dot-off: rgba(60, 160, 150, 0.25);
-    --dot-on: #80f0e0;
-    --accent: #30a0a0;
-}
-
-/* Ebru Bordo teması */
-.theme-ebru-bordo {
-    --frame-color: #8a2030;
-    --frame-shine: #c04050;
-    --text-off: rgba(200, 100, 100, 0.25);
-    --text-on: #ffc0a0;
-    --glow-color: rgba(255, 192, 160, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(255, 192, 160, 0.8);
-    --dot-off: rgba(200, 100, 100, 0.25);
-    --dot-on: #ffc0a0;
-    --accent: #c04050;
-}
-
-/* Okyanus Jaspis teması */
-.theme-okyanus-jaspis {
-    --frame-color: #2a6040;
-    --frame-shine: #50a070;
-    --text-off: rgba(80, 160, 120, 0.25);
-    --text-on: #a0f0c0;
-    --glow-color: rgba(160, 240, 192, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(160, 240, 192, 0.8);
-    --dot-off: rgba(80, 160, 120, 0.25);
-    --dot-on: #a0f0c0;
-    --accent: #40a060;
-}
-
-/* Kaplan Gözü teması */
-.theme-kaplan-gozu {
-    --frame-color: #8a6020;
-    --frame-shine: #c89830;
-    --text-off: rgba(200, 150, 60, 0.25);
-    --text-on: #ffe080;
-    --glow-color: rgba(255, 224, 128, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(255, 224, 128, 0.8);
-    --dot-off: rgba(200, 150, 60, 0.25);
-    --dot-on: #ffe080;
-    --accent: #c09030;
-}
-
-/* Ebru Çok Renkli teması */
-.theme-ebru-cokrenkli {
-    --frame-color: #4a5060;
-    --frame-shine: #8090a0;
-    --text-off: rgba(140, 160, 180, 0.25);
-    --text-on: #d0e8ff;
-    --glow-color: rgba(208, 232, 255, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(208, 232, 255, 0.8);
-    --dot-off: rgba(140, 160, 180, 0.25);
-    --dot-on: #d0e8ff;
-    --accent: #6080a0;
-}
-
-/* Gül Kuvarsı teması */
-.theme-gul-kuvarsi {
-    --frame-color: #8a5060;
-    --frame-shine: #c08090;
-    --text-off: rgba(200, 140, 150, 0.25);
-    --text-on: #ffc8d0;
-    --glow-color: rgba(255, 200, 208, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(255, 200, 208, 0.8);
-    --dot-off: rgba(200, 140, 150, 0.25);
-    --dot-on: #ffc8d0;
-    --accent: #c08090;
-}
-
-/* Lapis Lazuli teması */
-.theme-lapis-lazuli {
-    --frame-color: #1a3080;
-    --frame-shine: #3050b0;
-    --text-off: rgba(60, 80, 180, 0.25);
-    --text-on: #a0b8ff;
-    --glow-color: rgba(160, 184, 255, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(160, 184, 255, 0.8);
-    --dot-off: rgba(60, 80, 180, 0.25);
-    --dot-on: #a0b8ff;
-    --accent: #4060c0;
-}
-
-/* Siyah Mermer teması */
-.theme-siyah-mermer {
-    --frame-color: #444;
-    --frame-shine: #888;
-    --text-off: rgba(150, 150, 150, 0.2);
-    --text-on: #ffffff;
-    --glow-color: rgba(255, 255, 255, 0.7);
-    --glow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color);
-    --corner-light: rgba(255, 255, 255, 0.8);
-    --dot-off: rgba(150, 150, 150, 0.2);
-    --dot-on: #ffffff;
-    --accent: #888;
-}
-
-/* Beyaz mermer çerçeve */
-.theme-beyaz-mermer .clock-frame,
-body.theme-beyaz-mermer .clock-frame {
-    --frame-color: #a09080;
-    --frame-shine: #d0c0b0;
-}
-
-/* ============================================
-   MERMER DAMAR EFEKTLERİ (SVG filter ile)
-   ============================================ */
-.clock-surface::before {
+/* Çerçeve stilleri */
+.gallery-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.15;
-    background:
-        repeating-linear-gradient(
-            var(--vein-angle, 135deg),
-            transparent 0px,
-            transparent 40px,
-            rgba(255, 255, 255, 0.08) 42px,
-            transparent 44px,
-            transparent 90px,
-            rgba(255, 255, 255, 0.05) 91px,
-            transparent 93px
-        ),
-        repeating-linear-gradient(
-            calc(var(--vein-angle, 135deg) + 30deg),
-            transparent 0px,
-            transparent 60px,
-            rgba(255, 255, 255, 0.06) 62px,
-            transparent 64px,
-            transparent 120px,
-            rgba(255, 255, 255, 0.04) 121px,
-            transparent 123px
-        );
+    border-radius: 10px;
     pointer-events: none;
-    z-index: 1;
+    z-index: 2;
+}
+
+.gallery-card:nth-child(1)::before {
+    box-shadow: inset 0 0 0 4px rgba(184, 150, 46, 0.5);
+}
+
+.gallery-card:nth-child(2)::before {
+    box-shadow: inset 0 0 0 4px rgba(200, 160, 130, 0.5);
+}
+
+.gallery-card:nth-child(3)::before {
+    box-shadow: inset 0 0 0 4px rgba(200, 190, 160, 0.5);
+}
+
+.gallery-card:nth-child(4)::before {
+    box-shadow: inset 0 0 0 4px rgba(100, 160, 180, 0.5);
+}
+
+.gallery-card:nth-child(5)::before {
+    box-shadow: inset 0 0 0 4px rgba(180, 160, 100, 0.5);
 }
 
 /* ============================================
-   RESPONSIVE TASARIM
+   RESPONSIVE
    ============================================ */
 
-/* Tablet */
-@media (max-width: 768px) {
+/* Landscape modda yüksekliği kontrol et */
+@media (max-height: 700px) {
     .app {
-        padding: 20px 12px 40px;
+        padding: 10px;
+        gap: 10px;
     }
 
     .clock-frame {
         padding: 10px;
     }
 
-    .header {
-        margin-bottom: 25px;
+    .clock-surface {
+        padding: clamp(14px, 3vw, 30px);
     }
 
-    .theme-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+    .corner-dot {
+        width: 5px;
+        height: 5px;
+    }
+
+    .corner-dot.top-left { top: 7px; left: 7px; }
+    .corner-dot.top-right { top: 7px; right: 7px; }
+    .corner-dot.bottom-left { bottom: 7px; left: 7px; }
+    .corner-dot.bottom-right { bottom: 7px; right: 7px; }
+}
+
+@media (max-height: 500px) {
+    .clock-surface {
+        padding: clamp(8px, 2vw, 16px);
+    }
+
+    .grid {
+        gap: clamp(2px, 0.8vw, 6px);
+    }
+
+    .letter {
+        font-size: clamp(0.5rem, 1.8vh, 1rem);
+        width: clamp(10px, 3.5vh, 22px);
+        height: clamp(10px, 3.5vh, 22px);
     }
 }
 
 /* Mobil */
 @media (max-width: 480px) {
     .app {
-        padding: 15px 8px 30px;
+        padding: 12px 8px;
+        gap: 12px;
     }
 
     .clock-frame {
         padding: 8px;
-        border-radius: 3px;
     }
 
     .clock-surface {
-        padding: clamp(10px, 3vw, 20px);
+        padding: clamp(16px, 4vw, 30px);
     }
 
     .grid {
-        gap: clamp(2px, 1vw, 6px);
+        gap: clamp(3px, 1.2vw, 8px);
     }
 
     .letter {
         width: clamp(14px, 6.5vw, 24px);
         height: clamp(14px, 6.5vw, 24px);
-        font-size: clamp(0.6rem, 2.5vw, 1rem);
+        font-size: clamp(0.55rem, 2.4vw, 1rem);
     }
 
-    .corner-light {
-        width: 4px;
-        height: 4px;
+    .bottom-bar input[type="time"] {
+        padding: 6px 10px;
+        font-size: 0.9rem;
     }
 
-    .header h1 {
-        letter-spacing: 3px;
+    .themes-btn {
+        padding: 6px 16px;
+        font-size: 0.9rem;
     }
 
-    .theme-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
-    .theme-card-label {
-        font-size: 0.6rem;
-        padding: 14px 6px 6px;
+    .corner-dot {
+        width: 5px;
+        height: 5px;
     }
 
-    .controls-section {
-        max-width: 280px;
-    }
+    .corner-dot.top-left { top: 6px; left: 6px; }
+    .corner-dot.top-right { top: 6px; right: 6px; }
+    .corner-dot.bottom-left { bottom: 6px; left: 6px; }
+    .corner-dot.bottom-right { bottom: 6px; right: 6px; }
 }
 
-/* Çok küçük ekranlar */
 @media (max-width: 360px) {
     .letter {
         width: clamp(12px, 6vw, 20px);
@@ -698,9 +450,5 @@ body.theme-beyaz-mermer .clock-frame {
 
     .grid {
         gap: 2px;
-    }
-
-    .theme-grid {
-        grid-template-columns: repeat(2, 1fr);
     }
 }
