@@ -1,51 +1,61 @@
 // Tamamen Türkçe Word Clock (Kelime Saat) Mantığı
 
 // ============================================
-// TEMA GALERİSİ
+// TEMA SİSTEMİ - Taş Dokuları
 // ============================================
 
-const GALLERY_ITEMS = [
-    { src: 'images/ornek1.jpg', name: 'Yeşil Mermer' },
-    { src: 'images/ornek2.jpg', name: 'Bakır Mermer' },
-    { src: 'images/ornek3.jpg', name: 'Altın Mermer' },
-    { src: 'images/ornek5.jpg', name: 'Ebru Sanatı' },
-    { src: 'images/ornek6.jpg', name: 'Antik Parşömen' }
+const THEMES = [
+    { id: 'stone-bg',       src: 'images/stone-bg.png',       name: 'Yeşil Mermer' },
+    { id: 'siyah-mermer',   src: 'images/siyah-mermer.png',   name: 'Siyah Mermer' },
+    { id: 'lapis-lazuli',   src: 'images/lapis-lazuli.png',   name: 'Lapis Lazuli' },
+    { id: 'ametist',        src: 'images/ametist.png',        name: 'Ametist' },
+    { id: 'kaplan-gozu',    src: 'images/kaplan-gozu.png',    name: 'Kaplan Gözü' },
+    { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' },
+    { id: 'malakit',        src: 'images/malakit.png',        name: 'Malakit' },
+    { id: 'fluorit',        src: 'images/fluorit.png',        name: 'Fluorit' }
 ];
 
-function initGallery() {
-    const gallery = document.getElementById('gallery');
-    GALLERY_ITEMS.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'gallery-card';
-        card.innerHTML = `
-            <img src="${item.src}" alt="${item.name}" loading="lazy">
-            <div class="gallery-card-label">${item.name}</div>
-        `;
-        card.addEventListener('click', () => openLightbox(item.src));
-        gallery.appendChild(card);
+let currentTheme = localStorage.getItem('turkishwatch-theme') || 'stone-bg';
+
+function applyTheme(themeId) {
+    const theme = THEMES.find(t => t.id === themeId);
+    if (!theme) return;
+    currentTheme = themeId;
+    localStorage.setItem('turkishwatch-theme', themeId);
+
+    document.querySelector('.stone-surface').style.backgroundImage = `url('${theme.src}')`;
+
+    document.querySelectorAll('.theme-thumb').forEach(el => {
+        el.classList.toggle('active', el.dataset.theme === themeId);
     });
 }
 
-// Modal aç/kapa
-const modalOverlay = document.getElementById('modalOverlay');
-const themesBtn = document.getElementById('themesBtn');
-const modalClose = document.getElementById('modalClose');
+function initThemeStrip() {
+    const strip = document.getElementById('themeStrip');
+    THEMES.forEach(theme => {
+        const thumb = document.createElement('div');
+        thumb.className = 'theme-thumb';
+        thumb.dataset.theme = theme.id;
+        thumb.title = theme.name;
+        thumb.innerHTML = `<img src="${theme.src}" alt="${theme.name}">`;
+        thumb.addEventListener('click', () => {
+            applyTheme(theme.id);
+            openLightbox(theme.src, theme.name);
+        });
+        strip.appendChild(thumb);
+    });
+}
 
-themesBtn.addEventListener('click', () => modalOverlay.classList.add('open'));
-modalClose.addEventListener('click', () => modalOverlay.classList.remove('open'));
-modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
-});
-
-// Lightbox aç/kapa
+// Lightbox
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
+const lightboxLabel = document.getElementById('lightboxLabel');
 const lightboxClose = document.getElementById('lightboxClose');
 
-function openLightbox(src) {
+function openLightbox(src, name) {
     lightboxImg.src = src;
+    lightboxLabel.textContent = name || '';
     lightbox.classList.add('open');
-    modalOverlay.classList.remove('open');
 }
 
 lightboxClose.addEventListener('click', (e) => {
@@ -57,10 +67,7 @@ lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
 lightboxImg.addEventListener('click', (e) => e.stopPropagation());
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        lightbox.classList.remove('open');
-        modalOverlay.classList.remove('open');
-    }
+    if (e.key === 'Escape') lightbox.classList.remove('open');
 });
 
 // ============================================
@@ -128,7 +135,7 @@ function initializeGrid() {
 
 function clearBoard() {
     document.querySelectorAll(".letter.active").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".corner-dot.active").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".dot.active").forEach(el => el.classList.remove("active"));
 }
 
 function lightUp(coords) {
@@ -203,19 +210,18 @@ function displayTime(h, m) {
 // ============================================
 
 function resizeClock() {
-    const stone = document.querySelector('.clock-stone');
+    const strip = document.querySelector('.theme-strip');
     const bottomBar = document.querySelector('.bottom-bar');
-
-    const barHeight = bottomBar.offsetHeight;
-    const gap = 16;
-    const padding = 40;
-    const availableH = window.innerHeight - barHeight - gap - padding;
+    const stripH = strip.offsetHeight;
+    const barH = bottomBar.offsetHeight;
+    const gaps = 12 * 2;
+    const pad = 32;
+    const availableH = window.innerHeight - stripH - barH - gaps - pad;
     const availableW = window.innerWidth - 40;
 
-    const size = Math.min(availableH, availableW, 600);
+    const size = Math.min(availableH, availableW, 580);
     const surface = document.querySelector('.stone-surface');
     surface.style.width = size + 'px';
-    surface.style.height = size + 'px';
 
     const fontSize = size * 0.032;
     document.querySelectorAll('.letter').forEach(el => {
@@ -228,7 +234,8 @@ function resizeClock() {
 // ============================================
 
 initializeGrid();
-initGallery();
+initThemeStrip();
+applyTheme(currentTheme);
 resizeClock();
 window.addEventListener('resize', resizeClock);
 

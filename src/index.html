@@ -9,38 +9,28 @@
 </head>
 <body>
     <div class="app">
+        <!-- Tema şeridi - saatin üstündeki karanlık alanda -->
+        <div class="theme-strip" id="themeStrip"></div>
+
         <div class="clock-stone" id="clockStone">
-            <!-- 3D kenar derinliği -->
             <div class="stone-edge edge-top"></div>
             <div class="stone-edge edge-right"></div>
             <div class="stone-edge edge-bottom"></div>
             <div class="stone-edge edge-left"></div>
-            <!-- Taş yüzey -->
             <div class="stone-surface">
-                <div class="corner-dot top-left" id="dot-1"></div>
-                <div class="corner-dot top-right" id="dot-2"></div>
-                <div class="corner-dot bottom-left" id="dot-3"></div>
-                <div class="corner-dot bottom-right" id="dot-4"></div>
                 <div class="stone-shine"></div>
                 <div id="grid" class="grid"></div>
+                <div class="dots-row">
+                    <span class="dot" id="dot-1"></span>
+                    <span class="dot" id="dot-2"></span>
+                    <span class="dot" id="dot-3"></span>
+                    <span class="dot" id="dot-4"></span>
+                </div>
             </div>
         </div>
 
         <div class="bottom-bar">
             <input type="time" id="timeInput" step="60" title="Zamanı değiştir">
-            <button class="themes-btn" id="themesBtn">Temalar</button>
-        </div>
-    </div>
-
-    <!-- Tema Modalı -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="gallery" id="gallery"></div>
-            </div>
         </div>
     </div>
 
@@ -48,6 +38,7 @@
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" id="lightboxClose">&times;</button>
         <img id="lightboxImg" src="" alt="">
+        <div class="lightbox-label" id="lightboxLabel"></div>
     </div>
 
     <script src="script.js"></script>
