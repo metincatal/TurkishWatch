@@ -4,37 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Türkçe Kelime Saat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>TÜRKÇE SAAT</h1>
-        <p>Tamamen Türkçeye uygun kelime bazlı lüks saat gösterimi.</p>
-        
-        <div class="clock-wrapper">
-            <div id="grid" class="grid">
-                <!-- Harfler JS tarafından oluşturulacaktır. -->
-            </div>
-            <div class="dots-wrapper">
-                <div class="dots" id="dots">
-                    <span class="dot" id="dot-1"></span>
-                    <span class="dot" id="dot-2"></span>
-                    <span class="dot" id="dot-3"></span>
-                    <span class="dot" id="dot-4"></span>
-                </div>
-                <div class="dot-info">
-                    (Ara dakikalar noktalarla gösterilir)
-                </div>
+    <div class="app">
+        <header class="header">
+            <h1>TÜRKÇE SAAT</h1>
+            <p class="subtitle">Kelime bazlı lüks saat gösterimi</p>
+        </header>
+
+        <div class="clock-frame" id="clockFrame">
+            <div class="corner-light top-left"></div>
+            <div class="corner-light top-right"></div>
+            <div class="corner-light bottom-left"></div>
+            <div class="corner-light bottom-right"></div>
+            <div class="clock-surface" id="clockSurface">
+                <div id="grid" class="grid"></div>
             </div>
         </div>
 
-        <div class="controls">
-            <label for="timeInput">Zamanı Değiştirin</label>
-            <input type="time" id="timeInput" step="60">
+        <div class="dots-wrapper">
+            <div class="dots" id="dots">
+                <span class="dot" id="dot-1"></span>
+                <span class="dot" id="dot-2"></span>
+                <span class="dot" id="dot-3"></span>
+                <span class="dot" id="dot-4"></span>
+            </div>
+            <div class="dot-info">(Ara dakikalar noktalarla gösterilir)</div>
+        </div>
+
+        <div class="controls-section">
+            <div class="time-control">
+                <label for="timeInput">Zamanı Değiştirin</label>
+                <input type="time" id="timeInput" step="60">
+            </div>
+        </div>
+
+        <div class="theme-section">
+            <h2 class="theme-title">Tema Seçin</h2>
+            <div class="theme-grid" id="themeGrid"></div>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
