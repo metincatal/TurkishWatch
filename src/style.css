@@ -96,7 +96,7 @@ body {
 .stone-surface {
     position: relative;
     overflow: hidden;
-    background-image: url('images/stone-bg.png');
+    background-image: url('images/siyah-mermer.png');
     background-size: cover;
     background-position: center;
     border-radius: 6px;

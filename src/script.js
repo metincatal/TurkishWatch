@@ -10,7 +10,7 @@ const THEMES = [
     { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' }
 ];
 
-let currentTheme = localStorage.getItem('turkishwatch-theme') || 'stone-bg';
+let currentTheme = localStorage.getItem('turkishwatch-theme') || 'siyah-mermer';
 
 function applyTheme(themeId) {
     const theme = THEMES.find(t => t.id === themeId);
