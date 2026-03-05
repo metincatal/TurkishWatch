@@ -237,6 +237,7 @@ window.addEventListener('resize', resizeClock);
 const inputElement = document.getElementById("timeInput");
 
 // Drum picker state (erken tanımla - updateClock tarafından da kullanılır)
+const DRUM_ITEM_H = 36;
 let drumH = 0;
 let drumM = 0;
 
@@ -276,8 +277,6 @@ inputElement.addEventListener("input", (e) => {
 // ============================================
 // DRUM PICKER (Mobil)
 // ============================================
-
-const DRUM_ITEM_H = 36;
 
 function drumBuild(scroller, count, pad) {
     scroller.innerHTML = '';
