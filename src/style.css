@@ -195,7 +195,7 @@ body {
 
 .letter {
     font-weight: 600;
-    color: rgba(180, 160, 100, 0.35);
+    color: rgba(180, 160, 100, 0.55);
     transition: color 0.5s ease, text-shadow 0.5s ease, transform 0.4s ease;
     text-transform: uppercase;
     user-select: none;

@@ -213,7 +213,7 @@ function resizeClock() {
     const availableH = window.innerHeight - stripH - barH - gaps - pad;
     const availableW = window.innerWidth - 40;
 
-    const size = Math.min(availableH, availableW, 580);
+    const size = Math.min(availableH, availableW, 440);
     const surface = document.querySelector('.stone-surface');
     surface.style.width = size + 'px';
 
