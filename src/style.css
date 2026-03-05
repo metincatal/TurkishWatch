@@ -321,6 +321,7 @@ body {
     position: relative;
     cursor: grab;
     flex-shrink: 0;
+    touch-action: none;
 }
 
 .drum-col:active { cursor: grabbing; }

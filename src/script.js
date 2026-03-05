@@ -10,13 +10,12 @@ const THEMES = [
     { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' }
 ];
 
-let currentTheme = localStorage.getItem('turkishwatch-theme') || 'siyah-mermer';
+let currentTheme = 'siyah-mermer';
 
 function applyTheme(themeId) {
     const theme = THEMES.find(t => t.id === themeId);
     if (!theme) return;
     currentTheme = themeId;
-    localStorage.setItem('turkishwatch-theme', themeId);
 
     document.querySelector('.stone-surface').style.backgroundImage = `url('${theme.src}')`;
 
@@ -313,9 +312,10 @@ function drumInitInteraction(col, scroller, maxVal, onChange) {
     let startY = 0, startTranslate = 0, isDragging = false;
 
     function getTranslateY() {
-        const style = getComputedStyle(scroller).transform;
-        if (style === 'none') return 0;
-        return new DOMMatrix(style).m42;
+        const t = scroller.style.transform;
+        if (!t) return 0;
+        const m = t.match(/translateY\((-?[\d.]+)px\)/);
+        return m ? parseFloat(m[1]) : 0;
     }
 
     function snapToNearest(currentY) {
