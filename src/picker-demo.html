@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Saat Seçici Demoları</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            background: #080808;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ---- Başlık ---- */
+        .page-title {
+            text-align: center;
+            padding: 20px 16px 0;
+            color: rgba(200, 190, 140, 0.6);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ---- Seçici Tab'ları ---- */
+        .picker-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 16px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .picker-tabs::-webkit-scrollbar { display: none; }
+
+        .tab {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: rgba(200,190,140,0.5);
+            font-family: inherit;
+            font-size: 0.78rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .tab.active {
+            background: rgba(200,190,140,0.15);
+            border-color: rgba(200,190,140,0.5);
+            color: #ffeebb;
+        }
+
+        /* ---- Ana içerik ---- */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px 24px;
+            gap: 16px;
+        }
+
+        /* ---- Saat (küçültülmüş) ---- */
+        .clock-stone {
+            position: relative;
+            flex-shrink: 0;
+            transform: perspective(800px) rotateX(2deg) rotateY(-1deg);
+            transform-style: preserve-3d;
+        }
+        .stone-surface {
+            position: relative;
+            overflow: hidden;
+            background-image: url('images/stone-bg.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 6px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            width: min(72vw, 320px);
+        }
+        .stone-shine {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.02) 100%);
+            pointer-events: none; z-index: 5; border-radius: 6px;
+        }
+        .stone-edge { position: absolute; z-index: 1; }
+        .edge-top { top:-8px; left:-4px; right:-4px; height:10px; background:linear-gradient(180deg,#0a1510,#0f2018); border-radius:6px 6px 0 0; transform:perspective(400px) rotateX(40deg); transform-origin:bottom; }
+        .edge-bottom { bottom:-8px; left:-4px; right:-4px; height:10px; background:linear-gradient(0deg,#060d0a,#0a1510); border-radius:0 0 6px 6px; transform:perspective(400px) rotateX(-40deg); transform-origin:top; }
+        .edge-left { top:-4px; bottom:-4px; left:-8px; width:10px; background:linear-gradient(90deg,#060d0a,#0f2018); border-radius:6px 0 0 6px; transform:perspective(400px) rotateY(-40deg); transform-origin:right; }
+        .edge-right { top:-4px; bottom:-4px; right:-8px; width:10px; background:linear-gradient(270deg,#060d0a,#0a1510); border-radius:0 6px 6px 0; transform:perspective(400px) rotateY(40deg); transform-origin:left; }
+        .grid {
+            display: grid; grid-template-columns: repeat(12,1fr); gap:0;
+            position:relative; z-index:4; padding:12% 14% 6% 14%;
+        }
+        .letter {
+            font-weight:600; color:rgba(180,160,100,0.35);
+            transition:color 0.5s, text-shadow 0.5s, transform 0.4s;
+            text-transform:uppercase; user-select:none;
+            display:flex; justify-content:center; align-items:center;
+            aspect-ratio:1; font-size:1.45cqi; letter-spacing:0.5px;
+        }
+        .letter.active {
+            color:#ffeebb;
+            text-shadow:0 0 6px rgba(255,238,187,0.9),0 0 15px rgba(255,238,187,0.6),0 0 30px rgba(255,220,150,0.3);
+            transform:scale(1.08); font-weight:700;
+        }
+        .dots-row {
+            display:flex; justify-content:center; gap:8px;
+            padding-bottom:8%; position:relative; z-index:4;
+        }
+        .dot {
+            width:6px; height:6px; border-radius:50%;
+            background:rgba(180,160,100,0.35); transition:all 0.4s;
+        }
+        .dot.active {
+            background:#ffeebb;
+            box-shadow:0 0 6px rgba(255,238,187,0.9),0 0 15px rgba(255,238,187,0.6),0 0 30px rgba(255,220,150,0.3);
+        }
+
+        /* ---- Seçici alanı ---- */
+        .picker-area {
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .picker-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .picker-panel.visible { display: flex; }
+
+        .picker-label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: rgba(200,190,140,0.4);
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* ================================================
+           1. STEPPER
+           ================================================ */
+        .stepper-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .stepper-btn {
+            background: none;
+            border: none;
+            color: rgba(200,190,140,0.7);
+            font-size: 1.4rem;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            font-family: inherit;
+            line-height: 1;
+        }
+        .stepper-btn:active { background: rgba(200,190,140,0.1); color: #ffeebb; }
+        .stepper-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 10px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #ffeebb;
+            min-width: 110px;
+            justify-content: center;
+            letter-spacing: 2px;
+        }
+        .stepper-sep { color: rgba(200,190,140,0.4); font-size: 1.4rem; }
+        .stepper-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stepper-unit-label {
+            font-size: 0.6rem;
+            color: rgba(200,190,140,0.35);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        /* ================================================
+           2. SLIDER
+           ================================================ */
+        .slider-wrap {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .slider-row-label {
+            font-size: 0.75rem;
+            color: rgba(200,190,140,0.5);
+            width: 50px;
+            letter-spacing: 1px;
+        }
+        .slider-row-val {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffeebb;
+            width: 32px;
+            text-align: right;
+        }
+        input[type="range"].stone-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            border-radius: 2px;
+            background: rgba(200,190,140,0.2);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"].stone-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #ffeebb;
+            box-shadow: 0 0 8px rgba(255,238,187,0.5);
+            cursor: pointer;
+        }
+        input[type="range"].stone-slider::-moz-range-thumb {
+            width: 22px; height: 22px;
+            border-radius: 50%; border: none;
+            background: #ffeebb;
+            box-shadow: 0 0 8px rgba(255,238,187,0.5);
+            cursor: pointer;
+        }
+
+        /* ================================================
+           3. DRUM PICKER
+           ================================================ */
+        .drum-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0 20px;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+        }
+        .drum-sep {
+            font-size: 2rem;
+            font-weight: 700;
+            color: rgba(200,190,140,0.4);
+            margin: 0 4px;
+        }
+        .drum-col {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            width: 48px;
+            height: 140px;
+        }
+        .drum-scroller {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+            cursor: grab;
+            user-select: none;
+        }
+        .drum-scroller:active { cursor: grabbing; }
+        .drum-item {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(200,190,140,0.25);
+            transition: color 0.2s, font-size 0.2s;
+            flex-shrink: 0;
+        }
+        .drum-item.selected {
+            color: #ffeebb;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(255,238,187,0.6);
+        }
+        .drum-item.near { color: rgba(200,190,140,0.55); font-size: 1.3rem; }
+        /* Üst/alt gradient geçiş */
+        .drum-wrap::before, .drum-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 48px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .drum-wrap::before {
+            top: 0;
+            background: linear-gradient(to bottom, #0d0d0d 0%, transparent 100%);
+        }
+        .drum-wrap::after {
+            bottom: 0;
+            background: linear-gradient(to top, #0d0d0d 0%, transparent 100%);
+        }
+        /* Seçim çizgisi */
+        .drum-selection-line {
+            position: absolute;
+            left: 0; right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 44px;
+            border-top: 1px solid rgba(200,190,140,0.2);
+            border-bottom: 1px solid rgba(200,190,140,0.2);
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        /* ================================================
+           4. NUMPAD
+           ================================================ */
+        .numpad-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .numpad-display {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .numpad-digit {
+            width: 36px; height: 52px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffeebb;
+            transition: all 0.15s;
+        }
+        .numpad-digit.active-input {
+            border-color: rgba(200,190,140,0.6);
+            box-shadow: 0 0 8px rgba(255,238,187,0.2);
+        }
+        .numpad-colon {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: rgba(200,190,140,0.4);
+            padding: 0 2px;
+        }
+        .numpad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 200px;
+        }
+        .numpad-key {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(200,190,140,0.8);
+            cursor: pointer;
+            transition: all 0.12s;
+            font-family: inherit;
+        }
+        .numpad-key:active, .numpad-key.pressed {
+            background: rgba(200,190,140,0.15);
+            color: #ffeebb;
+            transform: scale(0.95);
+        }
+        .numpad-key.del {
+            font-size: 1rem;
+            color: rgba(200,190,140,0.5);
+        }
+        .numpad-key.confirm {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: rgba(200,190,140,0.6);
+        }
+
+        /* ================================================
+           5. BOTTOM SHEET DRUM
+           ================================================ */
+        .sheet-trigger-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px 32px;
+            color: rgba(200,190,140,0.8);
+            font-family: inherit;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sheet-trigger-btn:active {
+            background: rgba(200,190,140,0.1);
+            color: #ffeebb;
+        }
+        .sheet-hint {
+            font-size: 0.7rem;
+            color: rgba(200,190,140,0.3);
+            letter-spacing: 1px;
+        }
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #111;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px 16px 0 0;
+            padding: 0 0 env(safe-area-inset-bottom, 16px);
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bottom-sheet.open { transform: translateY(0); }
+        .sheet-handle {
+            width: 40px; height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+        }
+        .sheet-title {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: rgba(200,190,140,0.5);
+            text-transform: uppercase;
+        }
+        .sheet-confirm-btn {
+            background: rgba(200,190,140,0.15);
+            border: 1px solid rgba(200,190,140,0.3);
+            border-radius: 8px;
+            padding: 8px 18px;
+            color: #ffeebb;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .sheet-drum-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 20px 20px;
+            height: 160px;
+            overflow: hidden;
+            position: relative;
+        }
+        .sheet-drum-wrap::before, .sheet-drum-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 56px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .sheet-drum-wrap::before { top:0; background:linear-gradient(to bottom,#111 0%,transparent 100%); }
+        .sheet-drum-wrap::after { bottom:0; background:linear-gradient(to top,#111 0%,transparent 100%); }
+        .sheet-selection {
+            position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
+            height:48px;
+            border-top:1px solid rgba(200,190,140,0.2);
+            border-bottom:1px solid rgba(200,190,140,0.2);
+            pointer-events:none; z-index:4;
+        }
+        .sheet-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s;
+        }
+        .sheet-overlay.open { opacity: 1; pointer-events: all; }
+    </style>
+</head>
+<body>
+
+<p class="page-title">⏱ Saat Seçici Demoları</p>
+
+<div class="picker-tabs">
+    <button class="tab active" data-picker="stepper">1 · Stepper</button>
+    <button class="tab" data-picker="slider">2 · Slider</button>
+    <button class="tab" data-picker="drum">3 · Drum</button>
+    <button class="tab" data-picker="numpad">4 · Numpad</button>
+    <button class="tab" data-picker="sheet">5 · Bottom Sheet</button>
+</div>
+
+<div class="main">
+
+    <!-- Saat -->
+    <div class="clock-stone">
+        <div class="stone-edge edge-top"></div>
+        <div class="stone-edge edge-right"></div>
+        <div class="stone-edge edge-bottom"></div>
+        <div class="stone-edge edge-left"></div>
+        <div class="stone-surface">
+            <div class="stone-shine"></div>
+            <div id="grid" class="grid"></div>
+            <div class="dots-row">
+                <span class="dot" id="dot-1"></span>
+                <span class="dot" id="dot-2"></span>
+                <span class="dot" id="dot-3"></span>
+                <span class="dot" id="dot-4"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seçici panelleri -->
+    <div class="picker-area">
+
+        <!-- 1. STEPPER -->
+        <div class="picker-panel visible" id="panel-stepper">
+            <p class="picker-label">◀ ▶ &nbsp; Artı / Eksi Butonlar</p>
+            <div class="stepper-wrap">
+                <button class="stepper-btn" id="stepHrDown">‹</button>
+                <div class="stepper-display">
+                    <div class="stepper-unit">
+                        <span class="stepper-unit-label">SAAT</span>
+                        <span id="stepHrVal">14</span>
+                    </div>
+                    <span class="stepper-sep">:</span>
+                    <div class="stepper-unit">
+                        <span class="stepper-unit-label">DAK</span>
+                        <span id="stepMinVal">29</span>
+                    </div>
+                </div>
+                <button class="stepper-btn" id="stepHrUp" style="border-left:1px solid rgba(255,255,255,0.06)">›</button>
+            </div>
+            <!-- Dakika için ayrı kontrol -->
+            <div class="stepper-wrap" style="opacity:0.8">
+                <button class="stepper-btn" id="stepMinDown">‹</button>
+                <div class="stepper-display" style="font-size:1.1rem; min-width:90px">
+                    <span style="font-size:0.65rem; color:rgba(200,190,140,0.4); letter-spacing:1px">DAKİKA</span>
+                </div>
+                <button class="stepper-btn" id="stepMinUp">›</button>
+            </div>
+        </div>
+
+        <!-- 2. SLIDER -->
+        <div class="picker-panel" id="panel-slider">
+            <p class="picker-label">⟷ &nbsp; Kaydırıcılar</p>
+            <div class="slider-wrap">
+                <div class="slider-row">
+                    <span class="slider-row-label">SAAT</span>
+                    <input type="range" class="stone-slider" id="sliderHr" min="0" max="23" value="14">
+                    <span class="slider-row-val" id="sliderHrVal">14</span>
+                </div>
+                <div class="slider-row">
+                    <span class="slider-row-label">DAKİKA</span>
+                    <input type="range" class="stone-slider" id="sliderMin" min="0" max="59" value="29">
+                    <span class="slider-row-val" id="sliderMinVal">29</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. DRUM PICKER -->
+        <div class="picker-panel" id="panel-drum">
+            <p class="picker-label">↕ &nbsp; Kaydırmalı Tambur</p>
+            <div class="drum-wrap">
+                <div class="drum-selection-line"></div>
+                <div class="drum-col" id="drumHrCol">
+                    <div class="drum-scroller" id="drumHrScroller"></div>
+                </div>
+                <span class="drum-sep">:</span>
+                <div class="drum-col" id="drumMinCol">
+                    <div class="drum-scroller" id="drumMinScroller"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. NUMPAD -->
+        <div class="picker-panel" id="panel-numpad">
+            <p class="picker-label">⌨ &nbsp; Numpad Girişi</p>
+            <div class="numpad-wrap">
+                <div class="numpad-display">
+                    <div class="numpad-digit active-input" id="nd0">1</div>
+                    <div class="numpad-digit" id="nd1">4</div>
+                    <span class="numpad-colon">:</span>
+                    <div class="numpad-digit" id="nd2">2</div>
+                    <div class="numpad-digit" id="nd3">9</div>
+                </div>
+                <div class="numpad-grid" id="numpadGrid">
+                    <button class="numpad-key">1</button>
+                    <button class="numpad-key">2</button>
+                    <button class="numpad-key">3</button>
+                    <button class="numpad-key">4</button>
+                    <button class="numpad-key">5</button>
+                    <button class="numpad-key">6</button>
+                    <button class="numpad-key">7</button>
+                    <button class="numpad-key">8</button>
+                    <button class="numpad-key">9</button>
+                    <button class="numpad-key del">⌫</button>
+                    <button class="numpad-key">0</button>
+                    <button class="numpad-key confirm">↵</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. BOTTOM SHEET -->
+        <div class="picker-panel" id="panel-sheet">
+            <p class="picker-label">↑ &nbsp; Alttan Çıkan Panel</p>
+            <button class="sheet-trigger-btn" id="sheetTrigger">14 : 29</button>
+            <p class="sheet-hint">Saate dokunarak aç</p>
+        </div>
+
+    </div><!-- /picker-area -->
+</div><!-- /main -->
+
+<!-- Bottom Sheet overlay -->
+<div class="sheet-overlay" id="sheetOverlay"></div>
+
+<!-- Bottom Sheet -->
+<div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+        <span class="sheet-title">Saat Seç</span>
+        <button class="sheet-confirm-btn" id="sheetConfirm">Ayarla</button>
+    </div>
+    <div class="sheet-drum-wrap">
+        <div class="sheet-selection"></div>
+        <div class="drum-col" id="sheetHrCol">
+            <div class="drum-scroller" id="sheetHrScroller"></div>
+        </div>
+        <span class="drum-sep">:</span>
+        <div class="drum-col" id="sheetMinCol">
+            <div class="drum-scroller" id="sheetMinScroller"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================
+// SAAT MANTIGI
+// ============================================
+const gridRows = [
+    "SAATONUONAVE","BİRİBİREÜÇÜM","ÜÇEİKİYİDÖRT",
+    "İKİYEDÖRDÜSE","DÖRDEVEBUÇUK","BEŞİBEŞEVAKT",
+    "ALTIYIALTIYA","YEDİYİYEDİYE","SEKİZİSEKİZE",
+    "DOKUZUAYİRMİ","ÇEYREKVEBEŞT","ONVARGEÇİYOR"
+];
+const WORDS = {
+    "SAAT":[0,0,3],"BES_MIN":[10,8,10],"ON_MIN":[11,0,1],
+    "YIRMI":[9,7,11],"CEYREK":[10,0,5],"BUCUK":[4,7,11],
+    "VAR":[11,2,4],"GECIYOR":[11,5,11]
+};
+const HOURS_NOMINATIVE = {
+    1:[[1,0,2]],2:[[2,3,5]],3:[[1,8,9]],4:[[2,8,11]],
+    5:[[5,0,2]],6:[[6,0,3]],7:[[7,0,3]],8:[[8,0,4]],
+    9:[[9,0,4]],10:[[0,4,5]],11:[[0,4,5],[1,0,2]],12:[[0,4,5],[2,3,5]]
+};
+const HOURS_ACCUSATIVE = {
+    1:[[1,0,3]],2:[[2,3,7]],3:[[1,8,10]],4:[[3,5,9]],
+    5:[[5,0,3]],6:[[6,0,5]],7:[[7,0,5]],8:[[8,0,5]],
+    9:[[9,0,5]],10:[[0,4,6]],11:[[0,4,5],[1,0,3]],12:[[0,4,5],[2,3,7]]
+};
+const HOURS_DATIVE = {
+    1:[[1,4,7]],2:[[3,0,4]],3:[[2,0,2]],4:[[4,0,4]],
+    5:[[5,4,7]],6:[[6,6,11]],7:[[7,6,11]],8:[[8,6,11]],
+    9:[[9,0,4],[9,6,6]],10:[[0,7,9]],11:[[0,4,5],[1,4,7]],12:[[0,4,5],[3,0,4]]
+};
+
+const gridEl = document.getElementById('grid');
+function initGrid() {
+    gridEl.innerHTML = '';
+    for (let r = 0; r < 12; r++)
+        for (let c = 0; c < 12; c++) {
+            const s = document.createElement('span');
+            s.className = 'letter'; s.id = `l_${r}_${c}`;
+            s.textContent = gridRows[r][c];
+            gridEl.appendChild(s);
+        }
+}
+function clearBoard() {
+    document.querySelectorAll('.letter.active').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.dot.active').forEach(e=>e.classList.remove('active'));
+}
+function lightUp([r,s,e]) {
+    for (let c=s;c<=e;c++) { const el=document.getElementById(`l_${r}_${c}`); if(el) el.classList.add('active'); }
+}
+function lightUpList(list) { if(list) list.forEach(lightUp); }
+function displayTime(h,m) {
+    clearBoard();
+    let baseMin, dotCount=0;
+    if (m===0) { baseMin=0; }
+    else if (m<=30) { baseMin=m-(m%5); dotCount=m%5; }
+    else {
+        if (m%5===0) { baseMin=m; }
+        else { baseMin=Math.ceil(m/5)*5; dotCount=baseMin-m; }
+    }
+    for (let i=1;i<=dotCount;i++) document.getElementById(`dot-${i}`).classList.add('active');
+    let ch=h%12; if(!ch) ch=12;
+    let th=(m>30)?(ch%12)+1:ch;
+    if (baseMin===0) {
+        if (dotCount>0) { lightUpList(HOURS_ACCUSATIVE[th]); lightUp(WORDS.GECIYOR); }
+        else { lightUp(WORDS.SAAT); lightUpList(HOURS_NOMINATIVE[th]); }
+    }
+    else if(baseMin===5){lightUpList(HOURS_ACCUSATIVE[th]);lightUp(WORDS.BES_MIN);lightUp(WORDS.GECIYOR);}
+    else if(baseMin===10){lightUpList(HOURS_ACCUSATIVE[th]);lightUp(WORDS.ON_MIN);lightUp(WORDS.GECIYOR);}
+    else if(baseMin===15){lightUpList(HOURS_ACCUSATIVE[th]);lightUp(WORDS.CEYREK);lightUp(WORDS.GECIYOR);}
+    else if(baseMin===20){lightUpList(HOURS_ACCUSATIVE[th]);lightUp(WORDS.YIRMI);lightUp(WORDS.GECIYOR);}
+    else if(baseMin===25){lightUpList(HOURS_ACCUSATIVE[th]);lightUp(WORDS.YIRMI);lightUp(WORDS.BES_MIN);lightUp(WORDS.GECIYOR);}
+    else if(baseMin===30){lightUp(WORDS.SAAT);lightUpList(HOURS_NOMINATIVE[th]);lightUp(WORDS.BUCUK);}
+    else if(baseMin===35){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.YIRMI);lightUp(WORDS.BES_MIN);lightUp(WORDS.VAR);}
+    else if(baseMin===40){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.YIRMI);lightUp(WORDS.VAR);}
+    else if(baseMin===45){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.CEYREK);lightUp(WORDS.VAR);}
+    else if(baseMin===50){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.ON_MIN);lightUp(WORDS.VAR);}
+    else if(baseMin===55){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.BES_MIN);lightUp(WORDS.VAR);}
+    else if(baseMin===60){lightUpList(HOURS_DATIVE[th]);lightUp(WORDS.VAR);}
+}
+
+// Mevcut saat/dakika state
+let curH = new Date().getHours();
+let curM = new Date().getMinutes();
+
+function setTime(h, m) {
+    curH = h; curM = m;
+    displayTime(h, m);
+    syncAll();
+}
+function p2(n) { return String(n).padStart(2,'0'); }
+
+// ============================================
+// TAB GEÇİŞİ
+// ============================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.picker-panel').forEach(p=>p.classList.remove('visible'));
+        tab.classList.add('active');
+        document.getElementById('panel-'+tab.dataset.picker).classList.add('visible');
+    });
+});
+
+// ============================================
+// 1. STEPPER
+// ============================================
+function updateStepperUI() {
+    document.getElementById('stepHrVal').textContent = p2(curH);
+    document.getElementById('stepMinVal').textContent = p2(curM);
+}
+document.getElementById('stepHrDown').addEventListener('click', ()=>{ setTime((curH+23)%24, curM); });
+document.getElementById('stepHrUp').addEventListener('click', ()=>{ setTime((curH+1)%24, curM); });
+document.getElementById('stepMinDown').addEventListener('click', ()=>{ setTime(curH, (curM+59)%60); });
+document.getElementById('stepMinUp').addEventListener('click', ()=>{ setTime(curH, (curM+1)%60); });
+
+// ============================================
+// 2. SLIDER
+// ============================================
+const sliderHr = document.getElementById('sliderHr');
+const sliderMin = document.getElementById('sliderMin');
+const sliderHrVal = document.getElementById('sliderHrVal');
+const sliderMinVal = document.getElementById('sliderMinVal');
+function updateSliderUI() {
+    sliderHr.value = curH; sliderMin.value = curM;
+    sliderHrVal.textContent = p2(curH);
+    sliderMinVal.textContent = p2(curM);
+}
+sliderHr.addEventListener('input', ()=>{ setTime(parseInt(sliderHr.value), curM); });
+sliderMin.addEventListener('input', ()=>{ setTime(curH, parseInt(sliderMin.value)); });
+
+// ============================================
+// 3 & 5. DRUM PICKER (yardımcı fonksiyonlar)
+// ============================================
+const ITEM_H = 44;
+
+function buildDrum(scroller, count, pad, selected) {
+    scroller.innerHTML = '';
+    // Üste 1 boşluk ekle
+    const top = document.createElement('div');
+    top.className = 'drum-item';
+    top.style.height = ITEM_H + 'px';
+    scroller.appendChild(top);
+
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.className = 'drum-item';
+        div.textContent = pad ? p2(i) : i;
+        div.dataset.val = i;
+        scroller.appendChild(div);
+    }
+
+    // Alta 1 boşluk
+    const bot = document.createElement('div');
+    bot.className = 'drum-item';
+    bot.style.height = ITEM_H + 'px';
+    scroller.appendChild(bot);
+
+    setDrumSelection(scroller, selected);
+}
+
+function setDrumSelection(scroller, val) {
+    // Ortala: col yüksekliği 140px, orta = 70px = index 1 (ilk boşluk)
+    // offset = val * ITEM_H (val = selected index, 0-based)
+    const offset = val * ITEM_H;
+    scroller.style.transform = `translateY(${-offset}px)`;
+    // Güncelle stilleri
+    scroller.querySelectorAll('.drum-item').forEach((el, i) => {
+        el.classList.remove('selected', 'near');
+        const realI = i - 1; // ilk boşluk offset
+        if (realI === val) el.classList.add('selected');
+        else if (Math.abs(realI - val) === 1) el.classList.add('near');
+    });
+}
+
+function initDrumInteraction(col, scroller, maxVal, pad, onChange) {
+    let startY, startTransform, isDragging = false;
+
+    function getTranslateY() {
+        const m = new WebKitCSSMatrix(getComputedStyle(scroller).transform);
+        return m.m42;
+    }
+    function snapToNearest(y) {
+        const clamped = Math.min(0, Math.max(-((maxVal-1) * ITEM_H), y));
+        const idx = Math.round(-clamped / ITEM_H);
+        scroller.style.transition = 'transform 0.2s ease';
+        setDrumSelection(scroller, idx);
+        onChange(idx);
+        setTimeout(()=>scroller.style.transition='', 250);
+    }
+
+    col.addEventListener('touchstart', e => {
+        isDragging = true;
+        startY = e.touches[0].clientY;
+        startTransform = getTranslateY();
+        scroller.style.transition = 'none';
+    }, {passive:true});
+    col.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const dy = e.touches[0].clientY - startY;
+        scroller.style.transform = `translateY(${startTransform + dy}px)`;
+        // Anlık stil güncelle
+        const currentVal = Math.round(-(startTransform + dy) / ITEM_H);
+        scroller.querySelectorAll('.drum-item').forEach((el,i) => {
+            el.classList.remove('selected','near');
+            const realI = i-1;
+            if(realI===currentVal) el.classList.add('selected');
+            else if(Math.abs(realI-currentVal)===1) el.classList.add('near');
+        });
+    }, {passive:true});
+    col.addEventListener('touchend', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        const dy = e.changedTouches[0].clientY - startY;
+        snapToNearest(startTransform + dy);
+    }, {passive:true});
+    // Mouse desteği (desktop test için)
+    col.addEventListener('mousedown', e => {
+        isDragging = true;
+        startY = e.clientY;
+        startTransform = getTranslateY();
+        scroller.style.transition = 'none';
+        e.preventDefault();
+    });
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dy = e.clientY - startY;
+        scroller.style.transform = `translateY(${startTransform + dy}px)`;
+    });
+    window.addEventListener('mouseup', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        const dy = e.clientY - startY;
+        snapToNearest(startTransform + dy);
+    });
+}
+
+// Drum 3 init
+buildDrum(document.getElementById('drumHrScroller'), 24, false, curH);
+buildDrum(document.getElementById('drumMinScroller'), 60, true, curM);
+initDrumInteraction(
+    document.getElementById('drumHrCol'),
+    document.getElementById('drumHrScroller'),
+    24, false, (val) => setTime(val, curM)
+);
+initDrumInteraction(
+    document.getElementById('drumMinCol'),
+    document.getElementById('drumMinScroller'),
+    60, true, (val) => setTime(curH, val)
+);
+
+function updateDrumUI() {
+    setDrumSelection(document.getElementById('drumHrScroller'), curH);
+    setDrumSelection(document.getElementById('drumMinScroller'), curM);
+}
+
+// ============================================
+// 4. NUMPAD
+// ============================================
+let numInput = [
+    Math.floor(curH/10),
+    curH%10,
+    Math.floor(curM/10),
+    curM%10
+];
+let numCursor = 0;
+
+function updateNumpadUI() {
+    numInput = [Math.floor(curH/10), curH%10, Math.floor(curM/10), curM%10];
+    numCursor = 0;
+    renderNumpad();
+}
+function renderNumpad() {
+    for (let i=0;i<4;i++) {
+        const el = document.getElementById('nd'+i);
+        el.textContent = numInput[i];
+        el.classList.toggle('active-input', i === numCursor);
+    }
+}
+document.querySelectorAll('.numpad-key').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const txt = btn.textContent.trim();
+        if (txt === '⌫') {
+            if (numCursor > 0) { numCursor--; numInput[numCursor] = 0; renderNumpad(); }
+        } else if (txt === '↵') {
+            const h = numInput[0]*10 + numInput[1];
+            const m = numInput[2]*10 + numInput[3];
+            if (h <= 23 && m <= 59) { setTime(h, m); }
+            numCursor = 0; renderNumpad();
+        } else {
+            const d = parseInt(txt);
+            if (numCursor < 4) {
+                numInput[numCursor] = d;
+                numCursor++;
+                renderNumpad();
+                if (numCursor === 4) {
+                    const h = numInput[0]*10 + numInput[1];
+                    const m = numInput[2]*10 + numInput[3];
+                    if (h <= 23 && m <= 59) { setTime(h, m); }
+                    setTimeout(()=>{ numCursor=0; renderNumpad(); }, 300);
+                }
+            }
+        }
+    });
+});
+
+// ============================================
+// 5. BOTTOM SHEET
+// ============================================
+const bottomSheet = document.getElementById('bottomSheet');
+const sheetOverlay = document.getElementById('sheetOverlay');
+let sheetHr = curH, sheetMin = curM;
+
+buildDrum(document.getElementById('sheetHrScroller'), 24, false, curH);
+buildDrum(document.getElementById('sheetMinScroller'), 60, true, curM);
+initDrumInteraction(
+    document.getElementById('sheetHrCol'),
+    document.getElementById('sheetHrScroller'),
+    24, false, (val) => { sheetHr = val; }
+);
+initDrumInteraction(
+    document.getElementById('sheetMinCol'),
+    document.getElementById('sheetMinScroller'),
+    60, true, (val) => { sheetMin = val; }
+);
+
+document.getElementById('sheetTrigger').addEventListener('click', () => {
+    sheetHr = curH; sheetMin = curM;
+    setDrumSelection(document.getElementById('sheetHrScroller'), curH);
+    setDrumSelection(document.getElementById('sheetMinScroller'), curM);
+    bottomSheet.classList.add('open');
+    sheetOverlay.classList.add('open');
+});
+document.getElementById('sheetConfirm').addEventListener('click', () => {
+    setTime(sheetHr, sheetMin);
+    bottomSheet.classList.remove('open');
+    sheetOverlay.classList.remove('open');
+});
+sheetOverlay.addEventListener('click', () => {
+    bottomSheet.classList.remove('open');
+    sheetOverlay.classList.remove('open');
+});
+
+function updateSheetTriggerBtn() {
+    document.getElementById('sheetTrigger').textContent = `${p2(curH)} : ${p2(curM)}`;
+}
+
+// ============================================
+// SYNC
+// ============================================
+function syncAll() {
+    updateStepperUI();
+    updateSliderUI();
+    updateDrumUI();
+    updateNumpadUI();
+    updateSheetTriggerBtn();
+}
+
+// ============================================
+// BAŞLAT
+// ============================================
+initGrid();
+displayTime(curH, curM);
+syncAll();
+</script>
+</body>
+</html>
