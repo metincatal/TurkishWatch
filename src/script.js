@@ -236,12 +236,20 @@ window.addEventListener('resize', resizeClock);
 
 const inputElement = document.getElementById("timeInput");
 
+// Drum picker state (erken tanımla - updateClock tarafından da kullanılır)
+let drumH = 0;
+let drumM = 0;
+
 function updateClock() {
     const n = new Date();
     const h = n.getHours();
     const m = n.getMinutes();
     inputElement.value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     displayTime(h, m);
+    drumH = h;
+    drumM = m;
+    drumSetSelection(document.getElementById('drumHrScroller'), h);
+    drumSetSelection(document.getElementById('drumMinScroller'), m);
 }
 
 let userOverride = false;
@@ -256,7 +264,128 @@ inputElement.addEventListener("input", (e) => {
     if (timeVal) {
         userOverride = true;
         const [hStr, mStr] = timeVal.split(":");
-        displayTime(parseInt(hStr, 10), parseInt(mStr, 10));
+        const h = parseInt(hStr, 10);
+        const m = parseInt(mStr, 10);
+        displayTime(h, m);
+        drumSetSelection(document.getElementById('drumHrScroller'), h);
+        drumSetSelection(document.getElementById('drumMinScroller'), m);
         setTimeout(() => { userOverride = false; }, 60000);
     }
 });
+
+// ============================================
+// DRUM PICKER (Mobil)
+// ============================================
+
+const DRUM_ITEM_H = 36;
+
+function drumBuild(scroller, count, pad) {
+    scroller.innerHTML = '';
+    // Üst boşluk (1 item yüksekliğinde)
+    const top = document.createElement('div');
+    top.className = 'drum-item';
+    scroller.appendChild(top);
+
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.className = 'drum-item';
+        div.textContent = pad ? String(i).padStart(2, '0') : i;
+        div.dataset.val = i;
+        scroller.appendChild(div);
+    }
+
+    // Alt boşluk
+    const bot = document.createElement('div');
+    bot.className = 'drum-item';
+    scroller.appendChild(bot);
+}
+
+function drumSetSelection(scroller, val) {
+    scroller.style.transform = `translateY(${-(val * DRUM_ITEM_H)}px)`;
+    scroller.querySelectorAll('.drum-item').forEach((el, i) => {
+        el.classList.remove('selected', 'near');
+        const realI = i - 1;
+        if (realI === val) el.classList.add('selected');
+        else if (Math.abs(realI - val) === 1) el.classList.add('near');
+    });
+}
+
+function drumInitInteraction(col, scroller, maxVal, onChange) {
+    let startY = 0, startTranslate = 0, isDragging = false;
+
+    function getTranslateY() {
+        const style = getComputedStyle(scroller).transform;
+        if (style === 'none') return 0;
+        return new DOMMatrix(style).m42;
+    }
+
+    function snapToNearest(currentY) {
+        const clamped = Math.min(0, Math.max(-((maxVal - 1) * DRUM_ITEM_H), currentY));
+        const idx = Math.round(-clamped / DRUM_ITEM_H);
+        scroller.style.transition = 'transform 0.2s ease';
+        drumSetSelection(scroller, idx);
+        onChange(idx);
+        setTimeout(() => { scroller.style.transition = ''; }, 250);
+    }
+
+    col.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startY = e.touches[0].clientY;
+        startTranslate = getTranslateY();
+        scroller.style.transition = 'none';
+    }, { passive: true });
+
+    col.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const dy = e.touches[0].clientY - startY;
+        const newY = startTranslate + dy;
+        scroller.style.transform = `translateY(${newY}px)`;
+        const currentVal = Math.round(-newY / DRUM_ITEM_H);
+        scroller.querySelectorAll('.drum-item').forEach((el, i) => {
+            el.classList.remove('selected', 'near');
+            const realI = i - 1;
+            if (realI === currentVal) el.classList.add('selected');
+            else if (Math.abs(realI - currentVal) === 1) el.classList.add('near');
+        });
+    }, { passive: true });
+
+    col.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const dy = e.changedTouches[0].clientY - startY;
+        snapToNearest(startTranslate + dy);
+    }, { passive: true });
+}
+
+// Drum başlatma
+
+drumBuild(document.getElementById('drumHrScroller'), 24, false);
+drumBuild(document.getElementById('drumMinScroller'), 60, true);
+drumSetSelection(document.getElementById('drumHrScroller'), drumH);
+drumSetSelection(document.getElementById('drumMinScroller'), drumM);
+
+drumInitInteraction(
+    document.getElementById('drumHrCol'),
+    document.getElementById('drumHrScroller'),
+    24,
+    (val) => {
+        drumH = val;
+        userOverride = true;
+        inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
+        displayTime(drumH, drumM);
+        setTimeout(() => { userOverride = false; }, 60000);
+    }
+);
+
+drumInitInteraction(
+    document.getElementById('drumMinCol'),
+    document.getElementById('drumMinScroller'),
+    60,
+    (val) => {
+        drumM = val;
+        userOverride = true;
+        inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
+        displayTime(drumH, drumM);
+        setTimeout(() => { userOverride = false; }, 60000);
+    }
+);
