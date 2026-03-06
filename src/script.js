@@ -5,8 +5,8 @@
 // ============================================
 
 const THEMES = [
-    { id: 'stone-bg',       src: 'images/stone-bg.png',       name: 'Yeşil Mermer' },
-    { id: 'siyah-mermer',   src: 'images/siyah-mermer.png',   name: 'Siyah Mermer' },
+    { id: 'stone-bg', src: 'images/stone-bg.png', name: 'Yeşil Mermer' },
+    { id: 'siyah-mermer', src: 'images/siyah-mermer.png', name: 'Siyah Mermer' },
     { id: 'kirmizi-jasper', src: 'images/kirmizi-jasper.png', name: 'Kırmızı Jasper' }
 ];
 
@@ -70,46 +70,46 @@ document.addEventListener('keydown', (e) => {
 
 const gridRows = [
     "SAATONUONAVE",
-    "BİRİBİREÜÇÜM",
-    "ÜÇEİKİYİDÖRT",
-    "İKİYEDÖRDÜSE",
-    "DÖRDEVEBUÇUK",
-    "BEŞİBEŞEVAKT",
-    "ALTIYIALTIYA",
-    "YEDİYİYEDİYE",
     "SEKİZİSEKİZE",
-    "DOKUZUAYİRMİ",
-    "ÇEYREKVEBEŞT",
+    "YEDİYİYEDİYE",
+    "ALTIYIALTIYA",
+    "İKİYİBEŞİÜÇÜ",
+    "İKİYEBEŞEÜÇE",
+    "BİRİBİREDÖRT",
+    "DÖRDÜDÖRDEVE",
+    "DOKUZUDOKUZA",
+    "YİRMİBUÇUKVE",
+    "ÇEYREKBEŞVKT",
     "ONVARGEÇİYOR",
 ];
 
 const WORDS = {
     "SAAT": [0, 0, 3],
-    "BES_MIN": [10, 8, 10],
+    "BES_MIN": [10, 6, 8],
     "ON_MIN": [11, 0, 1],
-    "YIRMI": [9, 7, 11],
+    "YIRMI": [9, 0, 4],
     "CEYREK": [10, 0, 5],
-    "BUCUK": [4, 7, 11],
+    "BUCUK": [9, 5, 9],
     "VAR": [11, 2, 4],
     "GECIYOR": [11, 5, 11]
 };
 
 const HOURS_NOMINATIVE = {
-    1: [[1, 0, 2]], 2: [[2, 3, 5]], 3: [[1, 8, 9]], 4: [[2, 8, 11]],
-    5: [[5, 0, 2]], 6: [[6, 0, 3]], 7: [[7, 0, 3]], 8: [[8, 0, 4]],
-    9: [[9, 0, 4]], 10: [[0, 4, 5]], 11: [[0, 4, 5], [1, 0, 2]], 12: [[0, 4, 5], [2, 3, 5]]
+    1: [[6, 0, 2]], 2: [[4, 0, 2]], 3: [[4, 9, 10]], 4: [[6, 8, 11]],
+    5: [[4, 5, 7]], 6: [[3, 0, 3]], 7: [[2, 0, 3]], 8: [[1, 0, 4]],
+    9: [[8, 0, 4]], 10: [[0, 4, 5]], 11: [[0, 4, 5], [6, 0, 2]], 12: [[0, 4, 5], [4, 0, 2]]
 };
 
 const HOURS_ACCUSATIVE = {
-    1: [[1, 0, 3]], 2: [[2, 3, 7]], 3: [[1, 8, 10]], 4: [[3, 5, 9]],
-    5: [[5, 0, 3]], 6: [[6, 0, 5]], 7: [[7, 0, 5]], 8: [[8, 0, 5]],
-    9: [[9, 0, 5]], 10: [[0, 4, 6]], 11: [[0, 4, 5], [1, 0, 3]], 12: [[0, 4, 5], [2, 3, 7]]
+    1: [[6, 0, 3]], 2: [[4, 0, 4]], 3: [[4, 9, 11]], 4: [[7, 0, 4]],
+    5: [[4, 5, 8]], 6: [[3, 0, 5]], 7: [[2, 0, 5]], 8: [[1, 0, 5]],
+    9: [[8, 0, 5]], 10: [[0, 4, 6]], 11: [[0, 4, 5], [6, 0, 3]], 12: [[0, 4, 5], [4, 0, 4]]
 };
 
 const HOURS_DATIVE = {
-    1: [[1, 4, 7]], 2: [[3, 0, 4]], 3: [[2, 0, 2]], 4: [[4, 0, 4]],
-    5: [[5, 4, 7]], 6: [[6, 6, 11]], 7: [[7, 6, 11]], 8: [[8, 6, 11]],
-    9: [[9, 0, 4], [9, 6, 6]], 10: [[0, 7, 9]], 11: [[0, 4, 5], [1, 4, 7]], 12: [[0, 4, 5], [3, 0, 4]]
+    1: [[6, 4, 7]], 2: [[5, 0, 4]], 3: [[5, 9, 11]], 4: [[7, 5, 9]],
+    5: [[5, 5, 8]], 6: [[3, 6, 11]], 7: [[2, 6, 11]], 8: [[1, 6, 11]],
+    9: [[8, 6, 11]], 10: [[0, 7, 9]], 11: [[0, 4, 5], [6, 4, 7]], 12: [[0, 4, 5], [5, 0, 4]]
 };
 
 const gridElement = document.getElementById("grid");
