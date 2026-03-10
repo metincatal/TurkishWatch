@@ -319,12 +319,9 @@ body {
     height: 108px;
     overflow: hidden;
     position: relative;
-    cursor: grab;
     flex-shrink: 0;
-    touch-action: none;
+    pointer-events: none;
 }
-
-.drum-col:active { cursor: grabbing; }
 
 .drum-scroller {
     display: flex;

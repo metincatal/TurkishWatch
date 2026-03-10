@@ -335,54 +335,6 @@ function drumSetSelection(scroller, val) {
     });
 }
 
-function drumInitInteraction(col, scroller, maxVal, onChange) {
-    let startY = 0, startTranslate = 0, isDragging = false;
-
-    function getTranslateY() {
-        const t = scroller.style.transform;
-        if (!t) return 0;
-        const m = t.match(/translateY\((-?[\d.]+)px\)/);
-        return m ? parseFloat(m[1]) : 0;
-    }
-
-    function snapToNearest(currentY) {
-        const clamped = Math.min(0, Math.max(-((maxVal - 1) * DRUM_ITEM_H), currentY));
-        const idx = Math.round(-clamped / DRUM_ITEM_H);
-        scroller.style.transition = 'transform 0.2s ease';
-        drumSetSelection(scroller, idx);
-        onChange(idx);
-        setTimeout(() => { scroller.style.transition = ''; }, 250);
-    }
-
-    col.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        startY = e.touches[0].clientY;
-        startTranslate = getTranslateY();
-        scroller.style.transition = 'none';
-    }, { passive: true });
-
-    col.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        const dy = e.touches[0].clientY - startY;
-        const newY = startTranslate + dy;
-        scroller.style.transform = `translateY(${newY}px)`;
-        const currentVal = Math.round(-newY / DRUM_ITEM_H);
-        scroller.querySelectorAll('.drum-item').forEach((el, i) => {
-            el.classList.remove('selected', 'near');
-            const realI = i - 1;
-            if (realI === currentVal) el.classList.add('selected');
-            else if (Math.abs(realI - currentVal) === 1) el.classList.add('near');
-        });
-    }, { passive: true });
-
-    col.addEventListener('touchend', (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        const dy = e.changedTouches[0].clientY - startY;
-        snapToNearest(startTranslate + dy);
-    }, { passive: true });
-}
-
 // Drum başlatma
 
 drumBuild(document.getElementById('drumHrScroller'), 24, false);
@@ -390,28 +342,63 @@ drumBuild(document.getElementById('drumMinScroller'), 60, true);
 drumSetSelection(document.getElementById('drumHrScroller'), drumH);
 drumSetSelection(document.getElementById('drumMinScroller'), drumM);
 
-drumInitInteraction(
-    document.getElementById('drumHrCol'),
-    document.getElementById('drumHrScroller'),
-    24,
-    (val) => {
-        drumH = val;
-        userOverride = true;
-        inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
-        displayTime(drumH, drumM);
-        setTimeout(() => { userOverride = false; }, 60000);
-    }
-);
+// ============================================
+// TAM EKRAN DOKUNMA KONTROLÜ (Mobil)
+// Sol yarı = saat, Sağ yarı = dakika
+// Yukarı kaydır = artar, Aşağı kaydır = azalır
+// Döngüsel: sınıra gelince en baştan başlar
+// ============================================
+(function () {
+    let active = false;
+    let startX = 0, startY = 0;
+    let baseH = 0, baseM = 0;
+    const STEP_PX = 28; // her birim için kaç piksel
 
-drumInitInteraction(
-    document.getElementById('drumMinCol'),
-    document.getElementById('drumMinScroller'),
-    60,
-    (val) => {
-        drumM = val;
-        userOverride = true;
-        inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
-        displayTime(drumH, drumM);
-        setTimeout(() => { userOverride = false; }, 60000);
+    function skipTarget(t) {
+        return t.tagName === 'BUTTON' || t.tagName === 'INPUT' || t.tagName === 'A' ||
+            !!(t.closest && (t.closest('.lightbox') || t.closest('.theme-thumb')));
     }
-);
+
+    document.addEventListener('touchstart', (e) => {
+        if (skipTarget(e.target)) return;
+        active = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        baseH = drumH;
+        baseM = drumM;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!active) return;
+        const dy = e.touches[0].clientY - startY;
+        const steps = -Math.round(dy / STEP_PX); // yukarı = pozitif = artar
+        const isLeft = startX < window.innerWidth / 2;
+
+        if (isLeft) {
+            const newH = ((baseH + steps) % 24 + 24) % 24;
+            if (newH !== drumH) {
+                drumH = newH;
+                userOverride = true;
+                inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
+                displayTime(drumH, drumM);
+                drumSetSelection(document.getElementById('drumHrScroller'), drumH);
+            }
+        } else {
+            const newM = ((baseM + steps) % 60 + 60) % 60;
+            if (newM !== drumM) {
+                drumM = newM;
+                userOverride = true;
+                inputElement.value = `${String(drumH).padStart(2, '0')}:${String(drumM).padStart(2, '0')}`;
+                displayTime(drumH, drumM);
+                drumSetSelection(document.getElementById('drumMinScroller'), drumM);
+            }
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+        if (active) {
+            active = false;
+            setTimeout(() => { userOverride = false; }, 60000);
+        }
+    }, { passive: true });
+})();
